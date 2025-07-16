@@ -1,11 +1,11 @@
-import React from "react"
-import { ArrowLeft } from "lucide-react"
-import Link from "next/link"
+import React from "react";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 export default function PracticeLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -15,8 +15,8 @@ export default function PracticeLayout({
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-4">
               <Link
-                href="/"
                 className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                href="/"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span>Back to Home</span>
@@ -36,5 +36,5 @@ export default function PracticeLayout({
         {children}
       </main>
     </div>
-  )
+  );
 }

@@ -38,7 +38,7 @@ next-env.d.ts
 # package managers
 pnpm-lock.yaml
 yarn.lock
-package-lock.json
+# package-lock.json
 bun.lockb
 
 # Python Backend

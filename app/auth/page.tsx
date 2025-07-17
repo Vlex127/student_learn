@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Input } from '@heroui/input'
 import { Button } from '@heroui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '../../lib/utils'
 import { Mail, Lock, User } from 'lucide-react'
 
 export default function AuthPage() {

@@ -9,10 +9,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    is_admin: bool = False
 
 class UserResponse(UserBase):
     id: int
     is_active: bool
+    is_admin: bool
     created_at: datetime
     
     class Config:
@@ -120,3 +122,27 @@ class PracticeSessionSummary(BaseModel):
     total_questions_attempted: int
     total_correct_answers: int
     subjects_practiced: List[str] 
+
+class SubjectContentResponse(BaseModel):
+    id: int
+    subject_id: int
+    title: str
+    body: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True 
+
+class LessonResponse(BaseModel):
+    id: int
+    content_id: int
+    title: str
+    body: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+class LessonCreate(BaseModel):
+    title: str
+    body: str 

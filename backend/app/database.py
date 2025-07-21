@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Database URL - use SQLite for development, PostgreSQL for production
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./studentlearn.db")
+# Database URL - use SQLite for development, MySQL for production
+DATABASE_URL = os.getenv("DATABASE_URL", "mysql+mysqlclient://user:password@host/dbname")
 
 # Create engine
 if DATABASE_URL.startswith("sqlite"):
@@ -32,4 +32,4 @@ def get_db():
     try:
         yield db
     finally:
-        db.close() 
+        db.close()

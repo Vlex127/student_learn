@@ -5,12 +5,16 @@ import { Link } from "@heroui/link";
 import { Snippet } from "@heroui/snippet";
 import { Code } from "@heroui/code";
 import { button as buttonStyles } from "@heroui/theme";
+import dynamic from "next/dynamic";
+const BabylonScene = dynamic(() => import("../components/BabylonScene"), { ssr: false });
 
 export default function Home() {
   return (
     <main className="min-h-screen overflow-hidden">
+      <div className="absolute inset-0 -z-10 animate-gradient bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 opacity-30 blur-2xl" />
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center gap-6 py-20 px-4 md:px-10">
+        <BabylonScene />
         <motion.div
           animate={{ opacity: 1, y: 0 }}
           className="text-center max-w-3xl"
@@ -159,7 +163,7 @@ export default function Home() {
           </p>
           <Link
             className="inline-block mt-6 bg-white text-black font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-105 transition"
-            href="/signup"
+            href="/auth"
           >
             Get Started
           </Link>
@@ -168,7 +172,7 @@ export default function Home() {
 
       {/* Footer Note */}
       <div className="text-center py-4 text-sm text-muted-foreground">
-        Built with ❤️ using HeroUI, Tailwind, shadcn, and Next.js
+ 
         <Snippet
           hideCopyButton
           hideSymbol

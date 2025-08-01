@@ -3,15 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from typing import List
-import uvicorn
+
 import os
 from dotenv import load_dotenv
 
 from app.database import get_db, engine
-from app.models import Base
-from app.schemas import UserCreate, UserResponse, LoginRequest, TokenResponse
+from app.models import Base, SubjectContent, Lesson
+from app.schemas import UserCreate, UserResponse, LoginRequest, TokenResponse, SubjectResponse, SubjectContentResponse, LessonResponse, LessonCreate
 from app.auth import create_access_token, get_current_user, authenticate_user, get_password_hash
-from app.crud import create_user, get_user_by_email
+from app.crud import create_user, get_user_by_email, get_users, get_subjects
 
 # Load environment variables
 load_dotenv()
@@ -56,7 +56,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
+
     # Create new user
     user = create_user(db, user_data)
     return user
@@ -71,14 +71,13 @@ async def login(login_data: LoginRequest, db: Session = Depends(get_db)):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     access_token = create_access_token(data={"sub": user.email})
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/auth/me", response_model=UserResponse)
 async def get_current_user_info(current_user = Depends(get_current_user)):
-    """Get current user information"""
-    return current_user
+    return UserResponse.from_orm(current_user)
 
 @app.get("/practice/subjects")
 async def get_practice_subjects():
@@ -115,6 +114,62 @@ async def get_practice_questions(subject_id: int, limit: int = 10):
     ]
     return {"questions": questions[:limit]}
 
+@app.get("/users", response_model=List[UserResponse])
+async def list_users(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    # Only allow admins to access this endpoint
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return get_users(db)
+
+# Public endpoint for library courses
+@app.get("/library/courses", response_model=List[SubjectResponse])
+async def get_library_courses(db: Session = Depends(get_db)):
+    """Get all active subjects/courses for the library page (public endpoint)"""
+    return get_subjects(db)
+
+@app.get("/subjects", response_model=List[SubjectResponse])
+async def list_subjects(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return get_subjects(db)
+
+@app.post("/subjects/{subject_id}/contents")
+async def add_content(subject_id: int, content: dict, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    new_content = SubjectContent(subject_id=subject_id, title=content["title"], body=content["body"])
+    db.add(new_content)
+    db.commit()
+    db.refresh(new_content)
+    return new_content
+
+@app.get("/subjects/{subject_id}/contents")
+async def get_contents(subject_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return db.query(SubjectContent).filter(SubjectContent.subject_id == subject_id).all()
+
+@app.get("/contents/{content_id}/lessons", response_model=List[LessonResponse])
+async def get_lessons(content_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    return db.query(Lesson).filter(Lesson.content_id == content_id).all()
+
+@app.post("/contents/{content_id}/lessons", response_model=LessonResponse)
+async def add_lesson(content_id: int, lesson: LessonCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized")
+    new_lesson = Lesson(content_id=content_id, title=lesson.title, body=lesson.body)
+    db.add(new_lesson)
+    db.commit()
+    db.refresh(new_lesson)
+    return new_lesson
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False) 
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
+from mangum import Mangum
+application = Mangum(app)

@@ -1,0 +1,6 @@
+[
+  { "id": 1, "header": "Table of Contents", "type": "Outline", "status": "Done", "target": "10", "limit": "15", "reviewer": "Eddie Lake" },
+  { "id": 2, "header": "Executive Summary", "type": "Summary", "status": "In Progress", "target": "5", "limit": "10", "reviewer": "Assign reviewer" },
+  { "id": 3, "header": "Technical Approach", "type": "Technical", "status": "Not Started", "target": "8", "limit": "12", "reviewer": "Assign reviewer" },
+  { "id": 4, "header": "Design", "type": "Design", "status": "Done", "target": "6", "limit": "8", "reviewer": "Emily Whalen" }
+] 

@@ -11,6 +11,7 @@ class User(Base):
     full_name = Column(String, nullable=False)
     hashed_password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)  # New field for admin status
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -29,6 +30,7 @@ class Subject(Base):
 
     # Relationships
     questions = relationship("Question", back_populates="subject")
+    contents = relationship("SubjectContent", back_populates="subject")
 
 class Question(Base):
     __tablename__ = "questions"
@@ -82,3 +84,24 @@ class QuestionAttempt(Base):
     user = relationship("User", back_populates="question_attempts")
     question = relationship("Question", back_populates="attempts")
     session = relationship("PracticeSession", back_populates="attempts") 
+
+class SubjectContent(Base):
+    __tablename__ = "subject_contents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
+    title = Column(String, nullable=False)
+    body = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    subject = relationship("Subject", back_populates="contents") 
+
+class Lesson(Base):
+    __tablename__ = "lessons"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content_id = Column(Integer, ForeignKey("subject_contents.id"), nullable=False)
+    title = Column(String, nullable=False)
+    body = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now()) 

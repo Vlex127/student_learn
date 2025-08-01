@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import { useState, useRef, useEffect } from "react";
 import { 
   Bot, 
@@ -17,17 +18,26 @@ import {
   Users,
   Award
 } from "lucide-react";
+=======
+import { useState, useRef } from "react";
+import { Bot } from "lucide-react";
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 import Link from "next/link";
 
 export default function HomePage() {
   // For draggable chat icon
+<<<<<<< HEAD
   const [chatPos, setChatPos] = useState({ x: 20, y: 80 });
+=======
+  const [chatPos, setChatPos] = useState({ x: 20, y: 20 });
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [showChat, setShowChat] = useState(false);
   const [hasDragged, setHasDragged] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
+<<<<<<< HEAD
   // Mock user data (replace with real data from API)
   const userStats = {
     testsCompleted: 24,
@@ -46,6 +56,11 @@ export default function HomePage() {
   const onMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+=======
+  // Mouse handlers
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
     setDragging(true);
     setHasDragged(false);
     const rect = chatRef.current?.getBoundingClientRect();
@@ -54,6 +69,7 @@ export default function HomePage() {
     }
   };
 
+<<<<<<< HEAD
   // Global mouse move handler
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -87,11 +103,36 @@ export default function HomePage() {
       document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [dragging, offset]);
+=======
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (dragging) {
+      setHasDragged(true);
+      const newX = e.clientX - offset.x;
+      const newY = e.clientY - offset.y;
+      
+      // Keep within viewport bounds
+      const maxX = window.innerWidth - 60;
+      const maxY = window.innerHeight - 60;
+      
+      setChatPos({
+        x: Math.max(0, Math.min(newX, maxX)),
+        y: Math.max(0, Math.min(newY, maxY))
+      });
+    }
+  };
+
+  const onMouseUp = () => {
+    setDragging(false);
+  };
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 
   // Touch handlers for mobile
   const onTouchStart = (e: React.TouchEvent) => {
     e.preventDefault();
+<<<<<<< HEAD
     e.stopPropagation();
+=======
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
     setDragging(true);
     setHasDragged(false);
     const touch = e.touches[0];
@@ -101,6 +142,7 @@ export default function HomePage() {
     }
   };
 
+<<<<<<< HEAD
   // Global touch move handler
   useEffect(() => {
     const handleTouchMove = (e: TouchEvent) => {
@@ -136,6 +178,30 @@ export default function HomePage() {
       document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [dragging, offset]);
+=======
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (dragging) {
+      e.preventDefault();
+      setHasDragged(true);
+      const touch = e.touches[0];
+      const newX = touch.clientX - offset.x;
+      const newY = touch.clientY - offset.y;
+      
+      // Keep within viewport bounds
+      const maxX = window.innerWidth - 60;
+      const maxY = window.innerHeight - 60;
+      
+      setChatPos({
+        x: Math.max(0, Math.min(newX, maxX)),
+        y: Math.max(0, Math.min(newY, maxY))
+      });
+    }
+  };
+
+  const onTouchEnd = () => {
+    setDragging(false);
+  };
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 
   // Handle click (only if not dragged)
   const handleClick = () => {
@@ -145,6 +211,7 @@ export default function HomePage() {
   };
 
   return (
+<<<<<<< HEAD
     <div className="space-y-6 md:space-y-8">
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl p-6 md:p-8 text-white">
@@ -299,6 +366,53 @@ export default function HomePage() {
           </Link>
         </div>
       </div>
+=======
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8"
+      onMouseMove={onMouseMove}
+      onMouseUp={onMouseUp}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      style={{ minHeight: "80vh" }}
+    >
+      {/* Take Test */}
+      <section id="tests" className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h2 className="text-lg md:text-xl font-semibold mb-2">Take a Practice Test</h2>
+        <p className="mb-4 text-muted-foreground">Sharpen your skills with a new quiz.</p>
+        <Link href="/tests" className="block">
+          <button className="bg-indigo-600 hover:bg-indigo-700 transition text-white px-4 py-2 rounded shadow w-full">Start Test</button>
+        </Link>
+      </section>
+
+      {/* Library */}
+      <section id="library" className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h2 className="text-lg md:text-xl font-semibold mb-2">Library</h2>
+        <p className="mb-4 text-muted-foreground">Read books, notes, and study materials.</p>
+        <Link href="/library" className="block">
+          <button className="bg-blue-600 hover:bg-blue-700 transition text-white px-4 py-2 rounded shadow w-full">Browse Library</button>
+        </Link>
+      </section>
+
+      {/* Progress */}
+      <section id="progress" className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition">
+        <h2 className="text-lg md:text-xl font-semibold mb-2">Your Progress</h2>
+        <p className="mb-4 text-muted-foreground">Track your scores and improvement over time.</p>
+        <Link href="/progress" className="block">
+          <div className="h-24 bg-gray-100 dark:bg-zinc-800 rounded flex items-center justify-center text-gray-400 hover:bg-gray-200 dark:hover:bg-zinc-700 transition cursor-pointer">
+            View Progress
+          </div>
+        </Link>
+      </section>
+
+      {/* AI Tutor */}
+      <section className="bg-white dark:bg-zinc-900 p-4 md:p-6 rounded-xl shadow hover:shadow-lg transition flex flex-col items-center justify-center">
+        <h2 className="text-lg md:text-xl font-semibold mb-2">AI Tutor</h2>
+        <p className="mb-4 text-muted-foreground">Get help with your studies</p>
+        <Link href="/ai" className="block w-full">
+          <button className="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded shadow w-full">Open AI Tutor</button>
+        </Link>
+      </section>
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 
       {/* Draggable AI Chat Icon */}
       <div
@@ -306,7 +420,11 @@ export default function HomePage() {
         style={{
           position: "fixed",
           left: chatPos.x,
+<<<<<<< HEAD
           top: chatPos.y,
+=======
+          bottom: chatPos.y,
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
           zIndex: 50,
           cursor: dragging ? "grabbing" : "grab",
           transition: dragging ? "none" : "all 0.2s ease",

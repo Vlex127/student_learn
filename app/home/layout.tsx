@@ -33,7 +33,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
         </SidebarContent>
         <SidebarFooter>
           <div className="px-4 py-2 text-xs text-muted-foreground">
-            © 2025 StudentLearn
+            &copy; 2025 StudentLearn
           </div>
         </SidebarFooter>
       </Sidebar>

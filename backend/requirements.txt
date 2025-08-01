@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 fastapi>=0.108.0
 uvicorn[standard]>=0.25.0
 python-multipart==0.0.6
@@ -5,6 +6,15 @@ python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
 sqlalchemy>=2.0.25
 alembic>=1.13.0
+=======
+fastapi>=0.104
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+sqlalchemy==2.0.23
+alembic==1.12.1
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 
 python-dotenv==1.0.1
 pydantic>=2.0
@@ -15,7 +25,11 @@ pytest-asyncio==0.21.1
 httpx==0.25.2
 gunicorn
 email-validator
+<<<<<<< HEAD
 mangum
+=======
+magnum
+>>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 uvicorn
 
 mysqlclient>=2.2

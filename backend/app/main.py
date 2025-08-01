@@ -169,7 +169,9 @@ async def add_lesson(content_id: int, lesson: LessonCreate, db: Session = Depend
     return new_lesson
 
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
+
 from mangum import Mangum
 application = Mangum(app)

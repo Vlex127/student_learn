@@ -1,5 +1,4 @@
 "use client";
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import { 
   Upload, 
@@ -24,15 +23,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getCourses, Course, transformCourseForUI } from "@/lib/api";
-=======
-import { useState } from "react";
-import { Upload, FileText, BookOpen, Clock, Users, Search, Plus } from "lucide-react";
->>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
 
 export default function LibraryPage() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-<<<<<<< HEAD
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
@@ -142,67 +136,10 @@ export default function LibraryPage() {
       downloadCount: 980,
       uploadDate: "2024-01-03",
       isFavorite: false,
-=======
-
-  const courses = [
-    {
-      id: "csc101",
-      title: "CSC 101",
-      name: "Introduction to Computer Science",
-      description: "Fundamentals of programming and computer science concepts",
-      students: 245,
-      duration: "16 weeks",
-      color: "bg-blue-500"
-    },
-    {
-      id: "csc102",
-      title: "CSC 102",
-      name: "Data Structures & Algorithms",
-      description: "Advanced programming concepts and problem-solving techniques",
-      students: 189,
-      duration: "16 weeks",
-      color: "bg-green-500"
-    },
-    {
-      id: "csc201",
-      title: "CSC 201",
-      name: "Object-Oriented Programming",
-      description: "Java, C++, and object-oriented design principles",
-      students: 156,
-      duration: "16 weeks",
-      color: "bg-purple-500"
-    },
-    {
-      id: "csc202",
-      title: "CSC 202",
-      name: "Database Systems",
-      description: "SQL, database design, and data management",
-      students: 134,
-      duration: "16 weeks",
       color: "bg-orange-500"
-    },
-    {
-      id: "csc301",
-      title: "CSC 301",
-      name: "Software Engineering",
-      description: "Software development lifecycle and best practices",
-      students: 98,
-      duration: "16 weeks",
-      color: "bg-red-500"
-    },
-    {
-      id: "csc302",
-      title: "CSC 302",
-      name: "Web Development",
-      description: "Full-stack web development with modern technologies",
-      students: 167,
-      duration: "16 weeks",
->>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
-      color: "bg-indigo-500"
     }
   ];
 
-<<<<<<< HEAD
   const categories = [
     { id: 'all', name: 'All Categories', count: 1247 },
     { id: 'programming', name: 'Programming', count: 324 },
@@ -216,8 +153,6 @@ export default function LibraryPage() {
 
   // Courses data now comes from the backend API via useEffect
 
-=======
->>>>>>> 784d4a7d535a6b760ca9427be5794216fcecb6ef
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
@@ -311,7 +246,7 @@ export default function LibraryPage() {
                 <div className={`w-12 h-12 rounded-lg ${course.color} flex items-center justify-center`}>
                   <span className="text-white font-bold text-lg">{course.title}</span>
                 </div>
-                <button className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition">
+                <button className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition" title="Add course">
                   <Plus size={16} />
                 </button>
               </div>

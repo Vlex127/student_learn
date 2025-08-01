@@ -6,9 +6,12 @@ export default function Globe3D() {
   return (
     <div style={{ width: "350px", height: "350px", margin: "0 auto" }}>
       <Canvas camera={{ position: [0, 0, 4] }}>
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <ambientLight intensity={0.5} />
+        {/* eslint-disable-next-line react/no-unknown-property */}
         <directionalLight position={[2, 2, 2]} />
         <mesh>
+          {/* eslint-disable-next-line react/no-unknown-property */}
           <sphereGeometry args={[1.2, 64, 64]} />
           <MeshWobbleMaterial
             color="#8b5cf6"

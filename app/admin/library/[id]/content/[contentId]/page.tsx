@@ -9,18 +9,14 @@ export default function ContentDetailPage() {
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
 
   useEffect(() => {
-    if (!courseId || !contentId) return;
-    const token =
-      typeof window !== "undefined"
-        ? window.localStorage.getItem("token")
-        : null;
+    if (!token || !courseId || !contentId) return;
 
     setLoading(true);
     setError("");
-    console.log("Fetching lessons for contentId:", contentId);
-    // Fetch content info
+    // Fetch content info for ID: ${contentId}
     fetch(`http://localhost:8000/subjects/${courseId}/contents`, {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -42,11 +38,11 @@ export default function ContentDetailPage() {
       .then((res) => (res.ok ? res.json() : Promise.reject(res)))
       .then((data) => {
         setLessons(Array.isArray(data) ? data : []);
-        console.log("Fetched lessons:", data);
+        // Fetched lessons data successfully
       })
       .catch(() => setError("Failed to fetch lessons"))
       .finally(() => setLoading(false));
-  }, [courseId, contentId]);
+  }, [token, courseId, contentId]);
 
   return (
     <div className="p-8">

@@ -56,7 +56,7 @@ export default function AdminPage() {
     })
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
-        console.log("Fetched users:", data);
+        // Fetched users: {data}
         setUsers(Array.isArray(data) ? data : []);
       });
   }, [token]);

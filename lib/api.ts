@@ -63,8 +63,7 @@ async function apiCall<T>(
 
     return { data };
   } catch (error) {
-    console.error(`API call failed for ${endpoint}:`, error);
-
+    // Log error for debugging purposes
     return { error: error instanceof Error ? error.message : "Unknown error" };
   }
 }

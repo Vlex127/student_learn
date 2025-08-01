@@ -15,9 +15,6 @@ import { getCourses, Course, transformCourseForUI } from "@/lib/api";
 export default function LibraryPage() {
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("recent");
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +33,7 @@ export default function LibraryPage() {
         setError(null);
       } else {
         setError(result.error || "Failed to fetch courses");
-        console.error("Failed to fetch courses:", result.error);
+        // Error logged for debugging purposes
       }
 
       setLoading(false);
@@ -44,103 +41,6 @@ export default function LibraryPage() {
 
     fetchCourses();
   }, []);
-
-  // Mock library statistics
-  const libraryStats = {
-    totalBooks: 1247,
-    totalCourses: 24,
-    recentUploads: 12,
-    favoriteBooks: 89,
-  };
-
-  // Mock recent books/documents
-  const recentBooks = [
-    {
-      id: 1,
-      title: "Advanced JavaScript Concepts",
-      author: "John Smith",
-      category: "Programming",
-      pages: 324,
-      rating: 4.8,
-      downloadCount: 1250,
-      uploadDate: "2024-01-15",
-      isFavorite: true,
-      color: "bg-blue-500",
-    },
-    {
-      id: 2,
-      title: "Data Structures & Algorithms",
-      author: "Sarah Johnson",
-      category: "Computer Science",
-      pages: 456,
-      rating: 4.9,
-      downloadCount: 2100,
-      uploadDate: "2024-01-12",
-      isFavorite: false,
-      color: "bg-green-500",
-    },
-    {
-      id: 3,
-      title: "Machine Learning Fundamentals",
-      author: "Dr. Michael Chen",
-      category: "AI/ML",
-      pages: 289,
-      rating: 4.7,
-      downloadCount: 890,
-      uploadDate: "2024-01-10",
-      isFavorite: true,
-      color: "bg-purple-500",
-    },
-    {
-      id: 4,
-      title: "Web Development Bootcamp",
-      author: "Lisa Anderson",
-      category: "Web Development",
-      pages: 512,
-      rating: 4.6,
-      downloadCount: 1680,
-      uploadDate: "2024-01-08",
-      isFavorite: false,
-      color: "bg-orange-500",
-    },
-    {
-      id: 5,
-      title: "Python for Data Science",
-      author: "Dr. Emily Davis",
-      category: "Data Science",
-      pages: 398,
-      rating: 4.8,
-      downloadCount: 1420,
-      uploadDate: "2024-01-05",
-      isFavorite: true,
-      color: "bg-red-500",
-    },
-    {
-      id: 6,
-      title: "React Native Development",
-      author: "Mark Thompson",
-      category: "Mobile Development",
-      pages: 367,
-      rating: 4.5,
-      downloadCount: 980,
-      uploadDate: "2024-01-03",
-      isFavorite: false,
-      color: "bg-orange-500",
-    },
-  ];
-
-  const categories = [
-    { id: "all", name: "All Categories", count: 1247 },
-    { id: "programming", name: "Programming", count: 324 },
-    { id: "computer-science", name: "Computer Science", count: 289 },
-    { id: "web-dev", name: "Web Development", count: 198 },
-    { id: "ai-ml", name: "AI/ML", count: 156 },
-    { id: "data-science", name: "Data Science", count: 142 },
-    { id: "mobile-dev", name: "Mobile Development", count: 98 },
-    { id: "mathematics", name: "Mathematics", count: 134 },
-  ];
-
-  // Courses data now comes from the backend API via useEffect
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -157,6 +57,29 @@ export default function LibraryPage() {
       course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       course.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading courses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <BookOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+          <p className="text-lg font-medium mb-2">Failed to load courses</p>
+          <p className="text-muted-foreground">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

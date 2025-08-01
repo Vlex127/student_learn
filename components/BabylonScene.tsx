@@ -20,8 +20,7 @@ export default function BabylonScene() {
     const scene = new Scene(engine);
 
     scene.clearColor.set(0, 0, 0, 0); // Set background to transparent
-
-    // Create a basic camera and light
+    // Create a basic camera
     const camera = new ArcRotateCamera(
       "camera",
       Math.PI / 2,
@@ -32,8 +31,6 @@ export default function BabylonScene() {
     );
 
     camera.attachControl(canvasRef.current, true);
-
-    const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
     // Create a torus knot
     const torusKnot = MeshBuilder.CreateTorusKnot(
@@ -55,6 +52,9 @@ export default function BabylonScene() {
     mat.diffuseColor = new Color3(0.4, 0.2, 0.8);
     mat.emissiveColor = new Color3(0.2, 0.8, 0.6);
     torusKnot.material = mat;
+
+    // Add lighting
+    new HemisphericLight("light", Vector3.Up(), scene);
 
     // Animate the torus knot
     engine.runRenderLoop(() => {

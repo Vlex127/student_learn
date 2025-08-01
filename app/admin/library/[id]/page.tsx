@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function CourseDetailPage() {
   const params = useParams();
-  const { id: courseId, contentId } = params;
+  const { id: courseId } = params;
   const [course, setCourse] = useState<any>(null);
   const [contents, setContents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

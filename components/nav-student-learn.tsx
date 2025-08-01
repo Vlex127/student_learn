@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Book,
@@ -10,9 +10,8 @@ import {
   Calendar,
   Settings,
   User,
-  GraduationCap,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
 
 import {
   SidebarGroup,
@@ -20,7 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const navigationItems = [
   {
@@ -48,7 +47,7 @@ const navigationItems = [
     url: "/progress",
     icon: BarChart,
   },
-]
+];
 
 const secondaryItems = [
   {
@@ -71,7 +70,7 @@ const secondaryItems = [
     url: "/settings",
     icon: Settings,
   },
-]
+];
 
 export function NavStudentLearn() {
   return (
@@ -110,5 +109,5 @@ export function NavStudentLearn() {
         </SidebarMenu>
       </SidebarGroup>
     </>
-  )
+  );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
@@ -20,21 +21,24 @@ export default function AdminPage() {
   const [user, setUser] = useState<AdminUser | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const router = useRouter();
-  const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
 
   useEffect(() => {
     if (!token) {
       router.replace("/auth");
+
       return;
     }
     fetch("http://localhost:8000/auth/me", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error("Unauthorized");
+
         return res.json();
       })
-      .then(data => {
+      .then((data) => {
         if (!data.is_admin) {
           router.replace("/home");
         } else {
@@ -50,8 +54,8 @@ export default function AdminPage() {
     fetch("http://localhost:8000/users", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.ok ? res.json() : [])
-      .then(data => {
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
         console.log("Fetched users:", data);
         setUsers(Array.isArray(data) ? data : []);
       });
@@ -61,10 +65,12 @@ export default function AdminPage() {
 
   return (
     <SidebarProvider
-      style={{
-        "--sidebar-width": "calc(var(--spacing) * 72)",
-        "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
     >
       <AppSidebar variant="inset" />
       <SidebarInset>

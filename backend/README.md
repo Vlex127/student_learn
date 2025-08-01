@@ -54,38 +54,46 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ## API Endpoints
 
 ### Authentication
+
 - `POST /auth/register` - Register new user
 - `POST /auth/login` - Login user
 - `GET /auth/me` - Get current user info
 
 ### Practice
+
 - `GET /practice/subjects` - Get available subjects
 - `GET /practice/questions/{subject_id}` - Get questions for subject
 
 ### Health Check
+
 - `GET /health` - API health status
 
 ## Database Schema
 
 ### Users
+
 - User registration and authentication
 - Profile management
 
 ### Subjects
+
 - Available practice subjects
 - Subject descriptions
 
 ### Questions
+
 - Multiple choice questions
 - Difficulty levels
 - Explanations
 
 ### Practice Sessions
+
 - User practice history
 - Score tracking
 - Time tracking
 
 ### Question Attempts
+
 - Individual question responses
 - Correctness tracking
 - Performance analytics
@@ -93,6 +101,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ## Development
 
 ### Project Structure
+
 ```
 backend/
 ├── main.py              # FastAPI application
@@ -128,12 +137,14 @@ pytest --cov=app
 ## Production Deployment
 
 ### Environment Variables
+
 - Set `SECRET_KEY` to a secure random string
 - Configure `DATABASE_URL` for your database
 - Set `ENVIRONMENT=production`
 - Configure CORS origins
 
 ### Database Migration
+
 ```bash
 # Initialize Alembic (if using)
 alembic init alembic
@@ -142,6 +153,7 @@ alembic upgrade head
 ```
 
 ### Docker Deployment
+
 ```dockerfile
 FROM python:3.11-slim
 
@@ -163,4 +175,4 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 ## License
 
-MIT License - see LICENSE file for details 
+MIT License - see LICENSE file for details

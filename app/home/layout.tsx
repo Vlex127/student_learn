@@ -13,7 +13,11 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
-export default function HomeLayout({ children }: { children: React.ReactNode }) {
+export default function HomeLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <SidebarProvider>
       <Sidebar>
@@ -24,7 +28,9 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">StudentLearn</span>
-              <span className="truncate text-xs text-muted-foreground">Learning Platform</span>
+              <span className="truncate text-xs text-muted-foreground">
+                Learning Platform
+              </span>
             </div>
           </div>
         </SidebarHeader>
@@ -39,9 +45,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       </Sidebar>
       <SidebarInset>
         <AppHeader />
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

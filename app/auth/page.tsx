@@ -27,6 +27,7 @@ export default function AuthPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password, full_name: name }),
         });
+
         if (!res.ok) throw new Error("Registration failed");
         // Optionally auto-login after registration
       } else {
@@ -36,20 +37,24 @@ export default function AuthPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
         });
+
         if (!res.ok) throw new Error("Login failed");
         const data = await res.json();
         const token = data.access_token;
+
         window.localStorage.setItem("token", token);
         // Fetch user info
         const meRes = await fetch("http://localhost:8000/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (!meRes.ok) throw new Error("Failed to fetch user info");
         const user = await meRes.json();
+
         if (user.is_admin) {
           router.push("/admin");
         } else {
-        router.push("/home");
+          router.push("/home");
         }
       }
     } catch (err: any) {
@@ -84,7 +89,7 @@ export default function AuthPage() {
                 id="name"
                 placeholder="John Doe"
                 value={name}
-                onChange={e => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
           </div>
@@ -102,7 +107,7 @@ export default function AuthPage() {
               placeholder="m@example.com"
               type="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
         </div>
@@ -119,11 +124,13 @@ export default function AuthPage() {
               placeholder="********"
               type="password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
         </div>
-        {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+        {error && (
+          <div className="text-red-500 text-sm text-center">{error}</div>
+        )}
         <Button className="w-full" type="submit">
           {isRegistering ? "Sign Up" : "Login"}
         </Button>

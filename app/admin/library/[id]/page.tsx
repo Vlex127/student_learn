@@ -13,17 +13,24 @@ export default function CourseDetailPage() {
 
   useEffect(() => {
     if (!courseId) return;
-    const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
+    const token =
+      typeof window !== "undefined"
+        ? window.localStorage.getItem("token")
+        : null;
+
     setLoading(true);
     setError("");
     // Fetch course info
     fetch("http://localhost:8000/subjects", {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => {
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => {
         if (Array.isArray(data)) {
-          const found = data.find((c: any) => String(c.id) === String(courseId));
+          const found = data.find(
+            (c: any) => String(c.id) === String(courseId),
+          );
+
           setCourse(found || null);
         }
       })
@@ -32,15 +39,17 @@ export default function CourseDetailPage() {
     fetch(`http://localhost:8000/subjects/${courseId}/contents`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(data => setContents(Array.isArray(data) ? data : []))
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => setContents(Array.isArray(data) ? data : []))
       .catch(() => setError("Failed to fetch course contents"))
       .finally(() => setLoading(false));
   }, [courseId]);
 
   return (
     <div className="p-8">
-      {loading && <div className="animate-pulse h-8 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded mb-4" />}
+      {loading && (
+        <div className="animate-pulse h-8 w-1/3 bg-gray-200 dark:bg-zinc-700 rounded mb-4" />
+      )}
       {error && <div className="text-red-500 mb-4">{error}</div>}
       {course && (
         <>
@@ -50,19 +59,25 @@ export default function CourseDetailPage() {
       )}
       <h2 className="text-xl font-semibold mb-4">Course Contents</h2>
       <div className="space-y-6">
-        {contents.map(content => (
+        {contents.map((content) => (
           <Link
             key={content.id}
-            href={`/admin/library/${courseId}/content/${content.id}`}
             className="block bg-white dark:bg-zinc-900 rounded-xl p-6 border shadow-sm hover:shadow-lg transition mb-4"
+            href={`/admin/library/${courseId}/content/${content.id}`}
           >
             <div className="font-bold text-lg mb-2">{content.title}</div>
-            <div className="text-base text-muted-foreground whitespace-pre-line line-clamp-2">{content.body}</div>
-            <div className="text-xs text-gray-400 mt-2">Created: {new Date(content.created_at).toLocaleString()}</div>
+            <div className="text-base text-muted-foreground whitespace-pre-line line-clamp-2">
+              {content.body}
+            </div>
+            <div className="text-xs text-gray-400 mt-2">
+              Created: {new Date(content.created_at).toLocaleString()}
+            </div>
           </Link>
         ))}
         {!loading && contents.length === 0 && (
-          <div className="text-center py-8 text-muted-foreground">No content found for this course.</div>
+          <div className="text-center py-8 text-muted-foreground">
+            No content found for this course.
+          </div>
         )}
       </div>
     </div>

@@ -6,7 +6,9 @@ import { Snippet } from "@heroui/snippet";
 import { Code } from "@heroui/code";
 import { button as buttonStyles } from "@heroui/theme";
 import dynamic from "next/dynamic";
-const BabylonScene = dynamic(() => import("../components/BabylonScene"), { ssr: false });
+const BabylonScene = dynamic(() => import("../components/BabylonScene"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
@@ -172,7 +174,6 @@ export default function Home() {
 
       {/* Footer Note */}
       <div className="text-center py-4 text-sm text-muted-foreground">
- 
         <Snippet
           hideCopyButton
           hideSymbol

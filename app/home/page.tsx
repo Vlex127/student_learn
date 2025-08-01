@@ -1,21 +1,19 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { 
-  Bot, 
-  BookOpen, 
-  PenTool, 
-  BarChart3, 
-  Trophy, 
-  Clock, 
-  Target, 
+import {
+  Bot,
+  BookOpen,
+  PenTool,
+  BarChart3,
+  Trophy,
+  Clock,
+  Target,
   Zap,
   TrendingUp,
   Calendar,
   Star,
-  ArrowRight,
   Play,
-  Users,
-  Award
+  Award,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -33,13 +31,13 @@ export default function HomePage() {
     testsCompleted: 24,
     averageScore: 87,
     studyStreak: 7,
-    totalStudyTime: 45
+    totalStudyTime: 45,
   };
 
   const recentActivity = [
     { subject: "Mathematics", score: 92, date: "Today" },
     { subject: "Physics", score: 85, date: "Yesterday" },
-    { subject: "Chemistry", score: 78, date: "2 days ago" }
+    { subject: "Chemistry", score: 78, date: "2 days ago" },
   ];
 
   // Mouse handlers
@@ -49,6 +47,7 @@ export default function HomePage() {
     setDragging(true);
     setHasDragged(false);
     const rect = chatRef.current?.getBoundingClientRect();
+
     if (rect) {
       setOffset({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     }
@@ -61,14 +60,14 @@ export default function HomePage() {
         setHasDragged(true);
         const newX = e.clientX - offset.x;
         const newY = e.clientY - offset.y;
-        
+
         // Keep within viewport bounds
         const maxX = window.innerWidth - 60;
         const maxY = window.innerHeight - 60;
-        
+
         setChatPos({
           x: Math.max(0, Math.min(newX, maxX)),
-          y: Math.max(0, Math.min(newY, maxY))
+          y: Math.max(0, Math.min(newY, maxY)),
         });
       }
     };
@@ -78,13 +77,13 @@ export default function HomePage() {
     };
 
     if (dragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [dragging, offset]);
 
@@ -96,6 +95,7 @@ export default function HomePage() {
     setHasDragged(false);
     const touch = e.touches[0];
     const rect = chatRef.current?.getBoundingClientRect();
+
     if (rect) {
       setOffset({ x: touch.clientX - rect.left, y: touch.clientY - rect.top });
     }
@@ -110,14 +110,14 @@ export default function HomePage() {
         const touch = e.touches[0];
         const newX = touch.clientX - offset.x;
         const newY = touch.clientY - offset.y;
-        
+
         // Keep within viewport bounds
         const maxX = window.innerWidth - 60;
         const maxY = window.innerHeight - 60;
-        
+
         setChatPos({
           x: Math.max(0, Math.min(newX, maxX)),
-          y: Math.max(0, Math.min(newY, maxY))
+          y: Math.max(0, Math.min(newY, maxY)),
         });
       }
     };
@@ -127,13 +127,15 @@ export default function HomePage() {
     };
 
     if (dragging) {
-      document.addEventListener('touchmove', handleTouchMove, { passive: false });
-      document.addEventListener('touchend', handleTouchEnd);
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+      document.addEventListener("touchend", handleTouchEnd);
     }
 
     return () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
     };
   }, [dragging, offset]);
 
@@ -150,8 +152,12 @@ export default function HomePage() {
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl p-6 md:p-8 text-white">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back! 👋</h1>
-            <p className="text-indigo-100 text-lg">Ready to continue your learning journey?</p>
+            <h1 className="text-2xl md:text-3xl font-bold mb-2">
+              Welcome back! 👋
+            </h1>
+            <p className="text-indigo-100 text-lg">
+              Ready to continue your learning journey?
+            </p>
           </div>
           <div className="hidden md:block">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4">
@@ -169,8 +175,12 @@ export default function HomePage() {
               <PenTool className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.testsCompleted}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Tests Completed</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {userStats.testsCompleted}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Tests Completed
+          </div>
         </div>
 
         <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
@@ -179,8 +189,12 @@ export default function HomePage() {
               <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.averageScore}%</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Average Score</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {userStats.averageScore}%
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Average Score
+          </div>
         </div>
 
         <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
@@ -189,8 +203,12 @@ export default function HomePage() {
               <Zap className="w-5 h-5 text-orange-600 dark:text-orange-400" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.studyStreak}</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Day Streak</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {userStats.studyStreak}
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Day Streak
+          </div>
         </div>
 
         <div className="bg-white dark:bg-zinc-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
@@ -199,8 +217,12 @@ export default function HomePage() {
               <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{userStats.totalStudyTime}h</div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">Study Time</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            {userStats.totalStudyTime}h
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Study Time
+          </div>
         </div>
       </div>
 
@@ -209,24 +231,40 @@ export default function HomePage() {
         {/* Recent Activity */}
         <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Activity</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Recent Activity
+            </h3>
             <TrendingUp className="w-5 h-5 text-gray-400" />
           </div>
           <div className="space-y-4">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-lg">
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-zinc-800 rounded-lg"
+              >
                 <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${
-                    activity.score >= 90 ? 'bg-green-500' : 
-                    activity.score >= 75 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`} />
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      activity.score >= 90
+                        ? "bg-green-500"
+                        : activity.score >= 75
+                          ? "bg-yellow-500"
+                          : "bg-red-500"
+                    }`}
+                  />
                   <div>
-                    <p className="font-medium text-gray-900 dark:text-white">{activity.subject}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{activity.date}</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {activity.subject}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {activity.date}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-gray-900 dark:text-white">{activity.score}%</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">
+                    {activity.score}%
+                  </p>
                   <p className="text-xs text-gray-500">Score</p>
                 </div>
               </div>
@@ -237,31 +275,45 @@ export default function HomePage() {
         {/* Upcoming Tasks */}
         <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Upcoming Tasks</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Upcoming Tasks
+            </h3>
             <Calendar className="w-5 h-5 text-gray-400" />
           </div>
           <div className="space-y-4">
             <div className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="w-2 h-2 bg-blue-500 rounded-full" />
               <div className="flex-1">
-                <p className="font-medium text-gray-900 dark:text-white">Physics Quiz</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Due in 2 days</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  Physics Quiz
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Due in 2 days
+                </p>
               </div>
               <Star className="w-4 h-4 text-blue-500" />
             </div>
             <div className="flex items-center gap-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <div className="w-2 h-2 bg-yellow-500 rounded-full" />
               <div className="flex-1">
-                <p className="font-medium text-gray-900 dark:text-white">Math Assignment</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Due in 5 days</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  Math Assignment
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Due in 5 days
+                </p>
               </div>
               <Clock className="w-4 h-4 text-yellow-500" />
             </div>
             <div className="flex items-center gap-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
               <div className="flex-1">
-                <p className="font-medium text-gray-900 dark:text-white">Chemistry Lab</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Due in 1 week</p>
+                <p className="font-medium text-gray-900 dark:text-white">
+                  Chemistry Lab
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Due in 1 week
+                </p>
               </div>
               <Award className="w-4 h-4 text-green-500" />
             </div>
@@ -271,30 +323,40 @@ export default function HomePage() {
 
       {/* Quick Actions */}
       <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-zinc-800">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          Quick Actions
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/tests" className="group">
+          <Link className="group" href="/tests">
             <div className="flex flex-col items-center p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors">
               <Play className="w-8 h-8 text-indigo-600 dark:text-indigo-400 mb-2" />
-              <span className="text-sm font-medium text-indigo-900 dark:text-indigo-100">Start Practice</span>
+              <span className="text-sm font-medium text-indigo-900 dark:text-indigo-100">
+                Start Practice
+              </span>
             </div>
           </Link>
-          <Link href="/ai" className="group">
+          <Link className="group" href="/ai">
             <div className="flex flex-col items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
               <Bot className="w-8 h-8 text-green-600 dark:text-green-400 mb-2" />
-              <span className="text-sm font-medium text-green-900 dark:text-green-100">Ask AI Tutor</span>
+              <span className="text-sm font-medium text-green-900 dark:text-green-100">
+                Ask AI Tutor
+              </span>
             </div>
           </Link>
-          <Link href="/library" className="group">
+          <Link className="group" href="/library">
             <div className="flex flex-col items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
               <BookOpen className="w-8 h-8 text-blue-600 dark:text-blue-400 mb-2" />
-              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Study Library</span>
+              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Study Library
+              </span>
             </div>
           </Link>
-          <Link href="/progress" className="group">
+          <Link className="group" href="/progress">
             <div className="flex flex-col items-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
               <BarChart3 className="w-8 h-8 text-purple-600 dark:text-purple-400 mb-2" />
-              <span className="text-sm font-medium text-purple-900 dark:text-purple-100">View Progress</span>
+              <span className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                View Progress
+              </span>
             </div>
           </Link>
         </div>
@@ -303,6 +365,8 @@ export default function HomePage() {
       {/* Draggable AI Chat Icon */}
       <div
         ref={chatRef}
+        className={`bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center md:p-4 sm:p-3 ${dragging ? "scale-110" : "hover:scale-105"}`}
+        role="button"
         style={{
           position: "fixed",
           left: chatPos.x,
@@ -313,11 +377,14 @@ export default function HomePage() {
           touchAction: "none",
           userSelect: "none",
         }}
+        tabIndex={0}
+        title="Chat with AI Tutor"
+        onClick={handleClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") handleClick();
+        }}
         onMouseDown={onMouseDown}
         onTouchStart={onTouchStart}
-        onClick={handleClick}
-        className={`bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg p-4 flex items-center justify-center md:p-4 sm:p-3 ${dragging ? 'scale-110' : 'hover:scale-105'}`}
-        title="Chat with AI Tutor"
       >
         <Bot size={24} />
       </div>
@@ -327,16 +394,23 @@ export default function HomePage() {
         <div className="fixed inset-0 bg-black/40 flex items-end justify-end z-50">
           <div className="bg-white dark:bg-zinc-900 rounded-t-2xl shadow-2xl w-full max-w-md p-4 md:p-6 m-2 md:m-4">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold flex items-center gap-2"><Bot /> AI Tutor</h3>
-              <button onClick={() => setShowChat(false)} className="text-gray-400 hover:text-red-500 text-xl">&times;</button>
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <Bot /> AI Tutor
+              </h3>
+              <button
+                className="text-gray-400 hover:text-red-500 text-xl"
+                onClick={() => setShowChat(false)}
+              >
+                &times;
+              </button>
             </div>
             <div className="h-40 md:h-48 overflow-y-auto border rounded p-2 mb-4 bg-gray-50 dark:bg-zinc-800">
               <p className="text-muted-foreground">Chat UI coming soon...</p>
             </div>
             <input
+              disabled
               className="w-full border rounded px-3 py-2"
               placeholder="Type your question..."
-              disabled
             />
           </div>
         </div>

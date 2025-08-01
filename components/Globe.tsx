@@ -12,13 +12,13 @@ export default function Globe3D() {
           <sphereGeometry args={[1.2, 64, 64]} />
           <MeshWobbleMaterial
             color="#8b5cf6"
-            speed={1.5}
             factor={0.3}
+            speed={1.5}
             wireframe={false}
           />
         </mesh>
-        <Stars radius={10} depth={50} count={2000} factor={4} />
-        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.5} />
+        <Stars count={2000} depth={50} factor={4} radius={10} />
+        <OrbitControls autoRotate autoRotateSpeed={1.5} enableZoom={false} />
       </Canvas>
     </div>
   );

@@ -5,13 +5,18 @@ from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
+import os
+from dotenv import load_dotenv
 
 from .database import get_db
 from .models import User
 from .schemas import TokenData
 
+# Load environment variables
+load_dotenv()
+
 # Configuration
-SECRET_KEY = "your-secret-key-here"  # In production, use environment variable
+SECRET_KEY = os.getenv("SECRET_KEY", "fallback-secret-key-for-development-only")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -87,4 +92,4 @@ def get_current_active_user(current_user: User = Depends(get_current_user)) -> U
     """Get the current active user"""
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user 
+    return current_user

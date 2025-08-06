@@ -131,7 +131,7 @@ class SubjectContentResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True 
+        from_attributes = True 
 
 class LessonResponse(BaseModel):
     id: int
@@ -141,7 +141,7 @@ class LessonResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LessonCreate(BaseModel):
     title: str

@@ -18,6 +18,7 @@ class User(Base):
     # Relationships
     practice_sessions = relationship("PracticeSession", back_populates="user")
     question_attempts = relationship("QuestionAttempt", back_populates="user")
+    enrollments = relationship("UserEnrollment", back_populates="user")
 
 class Subject(Base):
     __tablename__ = "subjects"
@@ -31,6 +32,7 @@ class Subject(Base):
     # Relationships
     questions = relationship("Question", back_populates="subject")
     contents = relationship("SubjectContent", back_populates="subject")
+    enrollments = relationship("UserEnrollment", back_populates="subject")
 
 class Question(Base):
     __tablename__ = "questions"
@@ -104,4 +106,22 @@ class Lesson(Base):
     content_id = Column(Integer, ForeignKey("subject_contents.id"), nullable=False)
     title = Column(String, nullable=False)
     body = Column(Text, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now()) 
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class UserEnrollment(Base):
+    __tablename__ = "user_enrollments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
+    enrolled_at = Column(DateTime(timezone=True), server_default=func.now())
+    is_active = Column(Boolean, default=True)
+
+    # Relationships
+    user = relationship("User", back_populates="enrollments")
+    subject = relationship("Subject", back_populates="enrollments")
+
+    # Ensure unique enrollment per user-subject pair
+    __table_args__ = (
+        {"extend_existing": True},
+    )

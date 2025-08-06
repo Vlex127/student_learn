@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
 
-from .models import User, Subject, Question, PracticeSession, QuestionAttempt
+from .models import User, Subject, Question, PracticeSession, QuestionAttempt, UserEnrollment
 from .schemas import UserCreate, QuestionCreate, PracticeSessionCreate, QuestionAttemptCreate
 from .auth import get_password_hash
 
@@ -60,6 +60,70 @@ def create_subject(db: Session, name: str, description: str = None) -> Subject:
     db.commit()
     db.refresh(db_subject)
     return db_subject
+
+def delete_subject(db: Session, subject_id: int) -> bool:
+    """Delete a subject by ID"""
+    subject = db.query(Subject).filter(Subject.id == subject_id).first()
+    if subject:
+        db.delete(subject)
+        db.commit()
+        return True
+    return False
+
+def get_subject_by_id(db: Session, subject_id: int) -> Optional[Subject]:
+    """Get subject by ID"""
+    return db.query(Subject).filter(Subject.id == subject_id).first()
+
+# User Enrollment CRUD operations
+def enroll_user_in_subject(db: Session, user_id: int, subject_id: int) -> Optional[UserEnrollment]:
+    """Enroll a user in a subject"""
+    # Check if already enrolled
+    existing = db.query(UserEnrollment).filter(
+        UserEnrollment.user_id == user_id,
+        UserEnrollment.subject_id == subject_id,
+        UserEnrollment.is_active == True
+    ).first()
+    
+    if existing:
+        return existing  # Already enrolled
+    
+    # Create new enrollment
+    enrollment = UserEnrollment(user_id=user_id, subject_id=subject_id)
+    db.add(enrollment)
+    db.commit()
+    db.refresh(enrollment)
+    return enrollment
+
+def unenroll_user_from_subject(db: Session, user_id: int, subject_id: int) -> bool:
+    """Remove user enrollment from a subject"""
+    enrollment = db.query(UserEnrollment).filter(
+        UserEnrollment.user_id == user_id,
+        UserEnrollment.subject_id == subject_id,
+        UserEnrollment.is_active == True
+    ).first()
+    
+    if enrollment:
+        enrollment.is_active = False
+        db.commit()
+        return True
+    return False
+
+def get_user_enrolled_subjects(db: Session, user_id: int) -> List[Subject]:
+    """Get all subjects a user is enrolled in"""
+    return db.query(Subject).join(UserEnrollment).filter(
+        UserEnrollment.user_id == user_id,
+        UserEnrollment.is_active == True,
+        Subject.is_active == True
+    ).all()
+
+def is_user_enrolled(db: Session, user_id: int, subject_id: int) -> bool:
+    """Check if user is enrolled in a specific subject"""
+    enrollment = db.query(UserEnrollment).filter(
+        UserEnrollment.user_id == user_id,
+        UserEnrollment.subject_id == subject_id,
+        UserEnrollment.is_active == True
+    ).first()
+    return enrollment is not None
 
 # Question CRUD operations
 def get_question(db: Session, question_id: int) -> Optional[Question]:

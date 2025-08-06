@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from "react";
 import { getUserStatistics, getPracticeHistory, getMyEnrolledCourses, unenrollFromCourse, Course, ApiResponse, transformCourseForUI } from "@/lib/api";
 import { Award, BookOpen, TrendingUp, Clock, CheckCircle, Play, X, AlertCircle } from "lucide-react";

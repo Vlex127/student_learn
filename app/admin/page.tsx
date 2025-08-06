@@ -8,7 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { DataTable } from "@/components/data-table";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, Tab } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   adminGetUsers,
   adminGetStatistics,
@@ -124,40 +124,14 @@ export default function AdminPage() {
           <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
             <Server size={28} /> Admin Dashboard
           </h1>
-          <Tabs className="mb-6" value={tab} onValueChange={setTab}>
-            <Tab
-              label={
-                <span>
-                  <Users size={16} /> Users
-                </span>
-              }
-              value="users"
-            />
-            <Tab
-              label={
-                <span>
-                  <BookOpen size={16} /> Subjects
-                </span>
-              }
-              value="subjects"
-            />
-            <Tab label={<span>Questions</span>} value="questions" />
-            <Tab
-              label={
-                <span>
-                  <TrendingUp size={16} /> Analytics
-                </span>
-              }
-              value="analytics"
-            />
-            <Tab
-              label={
-                <span>
-                  <Server size={16} /> System
-                </span>
-              }
-              value="system"
-            />
+          <Tabs value={tab} onValueChange={setTab} className="mb-6">
+            <TabsList>
+              <TabsTrigger value="users"><Users size={16} /> Users</TabsTrigger>
+              <TabsTrigger value="subjects"><BookOpen size={16} /> Subjects</TabsTrigger>
+              <TabsTrigger value="questions">Questions</TabsTrigger>
+              <TabsTrigger value="analytics"><TrendingUp size={16} /> Analytics</TabsTrigger>
+              <TabsTrigger value="system"><Server size={16} /> System</TabsTrigger>
+            </TabsList>
           </Tabs>
           {tab === "users" && (
             <div>

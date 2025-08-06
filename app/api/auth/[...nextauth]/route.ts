@@ -1,8 +1,8 @@
-import NextAuth, { type NextAuthOptions, type Session } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -18,9 +18,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
         try {
-          // Call your backend API to verify user
           const res = await fetch(
             `${process.env.BACKEND_URL || "http://localhost:8000"}/api/login`,
             {
@@ -32,11 +30,8 @@ export const authOptions: NextAuthOptions = {
               }),
             },
           );
-
           if (!res.ok) return null;
-
           const user = await res.json();
-
           if (user && user.email) {
             return {
               id: user.id || user.user_id || "unknown",
@@ -47,11 +42,9 @@ export const authOptions: NextAuthOptions = {
                 user.access_token || user.accessToken || "default-token",
             };
           }
-
           return null;
         } catch (error) {
           console.error("Authorization error:", error);
-
           return null;
         }
       },
@@ -76,10 +69,9 @@ export const authOptions: NextAuthOptions = {
         token.isAdmin = user.isAdmin;
         token.accessToken = user.accessToken;
       }
-
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (token) {
         session.user = {
           id: token.id as string,
@@ -89,14 +81,11 @@ export const authOptions: NextAuthOptions = {
         };
         session.accessToken = token.accessToken as string;
       }
-
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === "development",
-};
-
-const handler = NextAuth(authOptions);
+});
 
 export { handler as GET, handler as POST };

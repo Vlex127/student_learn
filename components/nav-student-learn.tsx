@@ -113,8 +113,7 @@ export function NavStudentLearn() {
           id: userData.id,
           name: userData.name || "User",
           email: userData.email || "",
-          avatar: userData.avatar || "/face.svg",
-          role: userData.role,
+          avatar: "/face.svg",
         });
       } else {
         setUser(null);

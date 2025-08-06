@@ -1,9 +1,9 @@
 // app/auth/layout.tsx
-import { Metadata } from 'next';
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Sign In - StudentLearn',
-  description: 'Sign in to access your StudentLearn account',
+  title: "Sign In - StudentLearn",
+  description: "Sign in to access your StudentLearn account",
 };
 
 export default function AuthLayout({

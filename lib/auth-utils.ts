@@ -1,15 +1,17 @@
 // Utility functions for NextAuth integration
 // These functions are kept for backward compatibility but now work with NextAuth
 
-import { getSession } from 'next-auth/react';
+import { getSession } from "next-auth/react";
 
 // Get current user data using NextAuth session
 export async function getCurrentUser() {
   try {
     const session = await getSession();
+
     return session?.user || null;
   } catch (error) {
-    console.error('Failed to fetch user data:', error);
+    console.error("Failed to fetch user data:", error);
+
     return null;
   }
 }
@@ -18,9 +20,11 @@ export async function getCurrentUser() {
 export async function isAuthenticated(): Promise<boolean> {
   try {
     const session = await getSession();
+
     return !!session?.user;
   } catch (error) {
-    console.error('Authentication check failed:', error);
+    console.error("Authentication check failed:", error);
+
     return false;
   }
 }
@@ -30,16 +34,17 @@ export async function isAuthenticated(): Promise<boolean> {
 
 export function setAuthToken(token: string) {
   // This function is deprecated - NextAuth handles token management
-  console.warn('setAuthToken is deprecated. Use NextAuth signIn instead.');
+  console.warn("setAuthToken is deprecated. Use NextAuth signIn instead.");
 }
 
 export function removeAuthToken() {
   // This function is deprecated - NextAuth handles token management
-  console.warn('removeAuthToken is deprecated. Use NextAuth signOut instead.');
+  console.warn("removeAuthToken is deprecated. Use NextAuth signOut instead.");
 }
 
 export function getAuthToken(): string | undefined {
   // This function is deprecated - NextAuth handles token management
-  console.warn('getAuthToken is deprecated. Use NextAuth useSession instead.');
+  console.warn("getAuthToken is deprecated. Use NextAuth useSession instead.");
+
   return undefined;
 }

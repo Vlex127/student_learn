@@ -1,33 +1,36 @@
-import NextAuth, { type NextAuthOptions, type Session } from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { JWT } from "next-auth/jwt";
 
-export const authOptions: NextAuthOptions = {
+const handler = NextAuth({
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "jsmith@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
         try {
-          // Call your backend API to verify user
-          const res = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          });
-          
+          const res = await fetch(
+            `${process.env.BACKEND_URL || "http://localhost:8000"}/api/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            },
+          );
           if (!res.ok) return null;
-          
           const user = await res.json();
           if (user && user.email) {
             return {
@@ -35,7 +38,8 @@ export const authOptions: NextAuthOptions = {
               email: user.email,
               name: user.name || user.full_name || "Unknown",
               isAdmin: user.is_admin || false,
-              accessToken: user.access_token || user.accessToken || "default-token",
+              accessToken:
+                user.access_token || user.accessToken || "default-token",
             };
           }
           return null;
@@ -67,7 +71,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (token) {
         session.user = {
           id: token.id as string,
@@ -81,8 +85,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
-};
+  debug: process.env.NODE_ENV === "development",
+});
 
-const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

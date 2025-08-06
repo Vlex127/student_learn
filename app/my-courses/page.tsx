@@ -16,14 +16,14 @@ import {
   Calendar,
   Award,
 } from "lucide-react";
-import { 
-  getMyEnrolledCourses, 
-  unenrollFromCourse, 
-  Course, 
+import { useRouter } from "next/navigation";
+
+import {
+  getMyEnrolledCourses,
+  unenrollFromCourse,
+  Course,
   transformCourseForUI,
-  ApiResponse 
 } from "@/lib/api";
-import { useRouter } from 'next/navigation';
 
 export default function MyCoursesPage() {
   const router = useRouter();
@@ -32,9 +32,13 @@ export default function MyCoursesPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filterStatus, setFilterStatus] = useState<"all" | "in-progress" | "completed">("all");
+  const [filterStatus, setFilterStatus] = useState<
+    "all" | "in-progress" | "completed"
+  >("all");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [unenrollLoading, setUnenrollLoading] = useState<Record<number, boolean>>({});
+  const [unenrollLoading, setUnenrollLoading] = useState<
+    Record<number, boolean>
+  >({});
   const [message, setMessage] = useState<{
     type: "success" | "error" | "info";
     text: string;
@@ -43,14 +47,16 @@ export default function MyCoursesPage() {
   // Check authentication status
   useEffect(() => {
     const checkAuth = () => {
-      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
       setIsAuthenticated(!!token);
     };
-    
+
     checkAuth();
-    window.addEventListener('focus', checkAuth);
-    
-    return () => window.removeEventListener('focus', checkAuth);
+    window.addEventListener("focus", checkAuth);
+
+    return () => window.removeEventListener("focus", checkAuth);
   }, []);
 
   const showMessage = (type: "success" | "error" | "info", text: string) => {
@@ -63,19 +69,24 @@ export default function MyCoursesPage() {
     const fetchEnrolledCourses = async () => {
       if (!isAuthenticated) {
         setLoading(false);
+
         return;
       }
 
       setLoading(true);
       try {
         const result = await getMyEnrolledCourses();
+
         if (result.data) {
-          const transformedCourses = result.data.map(course => ({
+          const transformedCourses = result.data.map((course) => ({
             ...transformCourseForUI(course),
             progress: Math.floor(Math.random() * 100), // Mock progress
-            status: Math.random() > 0.7 ? 'completed' : 'in-progress', // Mock status
-            lastAccessed: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString(),
+            status: Math.random() > 0.7 ? "completed" : "in-progress", // Mock status
+            lastAccessed: new Date(
+              Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+            ).toLocaleDateString(),
           }));
+
           setCourses(transformedCourses);
           setError(null);
         } else if (result.error) {
@@ -97,32 +108,35 @@ export default function MyCoursesPage() {
       return;
     }
 
-    setUnenrollLoading(prev => ({ ...prev, [courseId]: true }));
+    setUnenrollLoading((prev) => ({ ...prev, [courseId]: true }));
 
     try {
       const result = await unenrollFromCourse(courseId);
+
       if (result.error) {
         showMessage("error", result.error);
       } else {
         showMessage("success", `Successfully unenrolled from ${courseName}`);
-        setCourses(prev => prev.filter(course => course.id !== courseId));
+        setCourses((prev) => prev.filter((course) => course.id !== courseId));
       }
     } catch (error) {
       console.error("Unenroll error:", error);
       showMessage("error", "Failed to unenroll from course");
     } finally {
-      setUnenrollLoading(prev => ({ ...prev, [courseId]: false }));
+      setUnenrollLoading((prev) => ({ ...prev, [courseId]: false }));
     }
   };
 
   // Filter courses based on search and status
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (course.description && course.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesFilter = filterStatus === "all" || 
-                         (course as any).status === filterStatus;
-    
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (course.description &&
+        course.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    const matchesFilter =
+      filterStatus === "all" || (course as any).status === filterStatus;
+
     return matchesSearch && matchesFilter;
   });
 
@@ -137,8 +151,8 @@ export default function MyCoursesPage() {
             Please log in to view your enrolled courses.
           </p>
           <button
-            onClick={() => window.location.href = '/auth'}
             className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
+            onClick={() => (window.location.href = "/auth")}
           >
             Go to Login
           </button>
@@ -160,7 +174,7 @@ export default function MyCoursesPage() {
             Manage and track your enrolled courses
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Award size={16} />
           <span>{courses.length} courses enrolled</span>
@@ -169,18 +183,20 @@ export default function MyCoursesPage() {
 
       {/* Success/Error Message */}
       {message && (
-        <div className={`p-4 rounded-lg border ${
-          message.type === "success" 
-            ? "bg-green-50 border-green-200 text-green-800" 
-            : message.type === "error"
-            ? "bg-red-50 border-red-200 text-red-800"
-            : "bg-blue-50 border-blue-200 text-blue-800"
-        }`}>
+        <div
+          className={`p-4 rounded-lg border ${
+            message.type === "success"
+              ? "bg-green-50 border-green-200 text-green-800"
+              : message.type === "error"
+                ? "bg-red-50 border-red-200 text-red-800"
+                : "bg-blue-50 border-blue-200 text-blue-800"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <span>{message.text}</span>
-            <button 
-              onClick={() => setMessage(null)}
+            <button
               className="text-current hover:opacity-70"
+              onClick={() => setMessage(null)}
             >
               <X size={16} />
             </button>
@@ -208,11 +224,11 @@ export default function MyCoursesPage() {
         <div className="flex items-center gap-3">
           {/* Filter */}
           <div className="flex items-center gap-2">
-            <Filter size={16} className="text-gray-500" />
+            <Filter className="text-gray-500" size={16} />
             <select
+              className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as any)}
-              className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500"
             >
               <option value="all">All Courses</option>
               <option value="in-progress">In Progress</option>
@@ -223,14 +239,14 @@ export default function MyCoursesPage() {
           {/* View Mode Toggle */}
           <div className="flex border rounded-lg overflow-hidden">
             <button
-              onClick={() => setViewMode("grid")}
               className={`p-2 ${viewMode === "grid" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600"}`}
+              onClick={() => setViewMode("grid")}
             >
               <Grid size={16} />
             </button>
             <button
-              onClick={() => setViewMode("list")}
               className={`p-2 ${viewMode === "list" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600"}`}
+              onClick={() => setViewMode("list")}
             >
               <List size={16} />
             </button>
@@ -241,7 +257,7 @@ export default function MyCoursesPage() {
       {/* Loading State */}
       {loading && (
         <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4" />
           <p className="text-muted-foreground">Loading your courses...</p>
         </div>
       )}
@@ -256,44 +272,54 @@ export default function MyCoursesPage() {
       )}
 
       {/* Empty State */}
-      {!loading && !error && filteredCourses.length === 0 && courses.length === 0 && (
-        <div className="text-center py-12">
-          <BookOpen className="mx-auto text-gray-400 mb-4" size={64} />
-          <h3 className="text-xl font-semibold mb-2">No Courses Enrolled</h3>
-          <p className="text-muted-foreground mb-6">
-            You haven't enrolled in any courses yet. Browse the library to find courses to add.
-          </p>
-          <button
-            onClick={() => window.location.href = '/library'}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
-          >
-            Browse Courses
-          </button>
-        </div>
-      )}
+      {!loading &&
+        !error &&
+        filteredCourses.length === 0 &&
+        courses.length === 0 && (
+          <div className="text-center py-12">
+            <BookOpen className="mx-auto text-gray-400 mb-4" size={64} />
+            <h3 className="text-xl font-semibold mb-2">No Courses Enrolled</h3>
+            <p className="text-muted-foreground mb-6">
+              You haven&apos;t enrolled in any courses yet. Browse the library
+              to find courses to add.
+            </p>
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition"
+              onClick={() => (window.location.href = "/library")}
+            >
+              Browse Courses
+            </button>
+          </div>
+        )}
 
       {/* No Search Results */}
-      {!loading && !error && filteredCourses.length === 0 && courses.length > 0 && (
-        <div className="text-center py-12">
-          <Search className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-lg font-semibold mb-2">No Courses Found</h3>
-          <p className="text-muted-foreground">
-            No courses match your search criteria. Try adjusting your filters.
-          </p>
-        </div>
-      )}
+      {!loading &&
+        !error &&
+        filteredCourses.length === 0 &&
+        courses.length > 0 && (
+          <div className="text-center py-12">
+            <Search className="mx-auto text-gray-400 mb-4" size={48} />
+            <h3 className="text-lg font-semibold mb-2">No Courses Found</h3>
+            <p className="text-muted-foreground">
+              No courses match your search criteria. Try adjusting your filters.
+            </p>
+          </div>
+        )}
 
       {/* Courses Grid/List */}
       {!loading && !error && filteredCourses.length > 0 && (
-        <div className={viewMode === "grid" 
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
-          : "space-y-4"
-        }>
+        <div
+          className={
+            viewMode === "grid"
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              : "space-y-4"
+          }
+        >
           {filteredCourses.map((course) => {
             const isUnenrolling = unenrollLoading[course.id] || false;
             const progress = (course as any).progress || 0;
-            const status = (course as any).status || 'in-progress';
-            const lastAccessed = (course as any).lastAccessed || 'Never';
+            const status = (course as any).status || "in-progress";
+            const lastAccessed = (course as any).lastAccessed || "Never";
 
             if (viewMode === "list") {
               return (
@@ -303,10 +329,12 @@ export default function MyCoursesPage() {
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 flex-1">
-                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${course.color || "bg-indigo-500"}`}>
+                      <div
+                        className={`w-12 h-12 rounded-lg flex items-center justify-center ${course.color || "bg-indigo-500"}`}
+                      >
                         <BookOpen className="text-white" size={24} />
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold mb-1">
                           {course.title || course.name}
@@ -321,12 +349,17 @@ export default function MyCoursesPage() {
                             <span>Last accessed: {lastAccessed}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            {status === 'completed' ? (
-                              <CheckCircle className="text-green-500" size={14} />
+                            {status === "completed" ? (
+                              <CheckCircle
+                                className="text-green-500"
+                                size={14}
+                              />
                             ) : (
                               <Play className="text-blue-500" size={14} />
                             )}
-                            <span className="capitalize">{status.replace('-', ' ')}</span>
+                            <span className="capitalize">
+                              {status.replace("-", " ")}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -334,15 +367,15 @@ export default function MyCoursesPage() {
 
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => router.push(`/courses/${course.id}`)}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition text-sm"
+                        onClick={() => router.push(`/courses/${course.id}`)}
                       >
                         Continue
                       </button>
                       <button
-                        onClick={() => handleUnenroll(course.id, course.name)}
-                        disabled={isUnenrolling}
                         className="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-lg transition text-sm disabled:opacity-50"
+                        disabled={isUnenrolling}
+                        onClick={() => handleUnenroll(course.id, course.name)}
                       >
                         {isUnenrolling ? "..." : "Unenroll"}
                       </button>
@@ -358,12 +391,14 @@ export default function MyCoursesPage() {
                 className="bg-white dark:bg-zinc-900 rounded-xl p-6 shadow-sm border hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${course.color || "bg-indigo-500"}`}>
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center ${course.color || "bg-indigo-500"}`}
+                  >
                     <BookOpen className="text-white" size={24} />
                   </div>
-                  
+
                   <div className="flex items-center gap-1">
-                    {status === 'completed' ? (
+                    {status === "completed" ? (
                       <CheckCircle className="text-green-500" size={16} />
                     ) : (
                       <Play className="text-blue-500" size={16} />
@@ -374,7 +409,7 @@ export default function MyCoursesPage() {
                 <h3 className="text-lg font-semibold mb-2 line-clamp-2">
                   {course.title || course.name}
                 </h3>
-                
+
                 {course.description && (
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
                     {course.description}
@@ -388,10 +423,10 @@ export default function MyCoursesPage() {
                     <span className="font-medium">{progress}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-indigo-600 h-2 rounded-full transition-all duration-300" 
+                    <div
+                      className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${progress}%` }}
-                    ></div>
+                    />
                   </div>
                 </div>
 
@@ -408,16 +443,16 @@ export default function MyCoursesPage() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => router.push(`/courses/${course.id}`)}
                     className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg transition text-sm font-medium"
+                    onClick={() => router.push(`/courses/${course.id}`)}
                   >
                     Continue Learning
                   </button>
                   <button
-                    onClick={() => handleUnenroll(course.id, course.name)}
-                    disabled={isUnenrolling}
                     className="bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded-lg transition text-sm disabled:opacity-50"
+                    disabled={isUnenrolling}
                     title="Unenroll from course"
+                    onClick={() => handleUnenroll(course.id, course.name)}
                   >
                     {isUnenrolling ? "..." : <X size={16} />}
                   </button>

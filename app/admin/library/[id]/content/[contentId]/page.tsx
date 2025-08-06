@@ -9,7 +9,8 @@ export default function ContentDetailPage() {
   const [lessons, setLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const token = typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
+  const token =
+    typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
 
   useEffect(() => {
     if (!token || !courseId || !contentId) return;

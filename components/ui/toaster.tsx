@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { useTheme } from 'next-themes';
+import * as React from "react";
+import { useTheme } from "next-themes";
+
 import {
   Toast,
   ToastClose,
@@ -9,8 +10,8 @@ import {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-} from '@/components/ui/toast';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 
 export function Toaster() {
   const { toasts } = useToast();
@@ -23,7 +24,9 @@ export function Toaster() {
           <Toast
             key={id}
             className={`${
-              theme === 'dark' ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'
+              theme === "dark"
+                ? "bg-gray-900 border-gray-800"
+                : "bg-white border-gray-200"
             }`}
             {...props}
           >

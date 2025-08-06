@@ -1,5 +1,6 @@
 import "../../styles/globals.css";
 import React from "react";
+
 import { Providers } from "../../providers";
 
 import { AppHeader } from "@/components/app-header";

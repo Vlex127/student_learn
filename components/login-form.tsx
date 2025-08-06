@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { signIn } from "next-auth/react";
 
 export function LoginForm({
   className,
@@ -32,20 +33,23 @@ export function LoginForm({
         variant: "destructive",
         duration: 5000,
       });
+
       return;
     }
     setIsLoading(true);
     try {
       if (isRegistering) {
-        const response = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const response = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password, name }),
-          credentials: 'include',
+          credentials: "include",
         });
+
         if (!response.ok) {
           const error = await response.json();
-          throw new Error(error.error || 'Registration failed');
+
+          throw new Error(error.error || "Registration failed");
         }
         toast({
           title: "Registration successful!",
@@ -60,6 +64,7 @@ export function LoginForm({
         password,
         callbackUrl,
       });
+
       if (result?.error) {
         toast({
           title: "Authentication Failed",
@@ -71,10 +76,10 @@ export function LoginForm({
         window.location.href = callbackUrl;
       }
     } catch (error: any) {
-      console.error('Authentication error:', error);
+      console.error("Authentication error:", error);
       toast({
         title: "Authentication Failed",
-        description: error.message || 'An error occurred during authentication',
+        description: error.message || "An error occurred during authentication",
         variant: "destructive",
         duration: 5000,
       });
@@ -84,7 +89,7 @@ export function LoginForm({
   };
 
   return (
-    <form 
+    <form
       className={cn("flex flex-col gap-6", className)}
       onSubmit={handleSubmit}
       {...props}
@@ -92,48 +97,48 @@ export function LoginForm({
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
+          required
+          autoComplete="email"
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          autoComplete="email"
-          required
         />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="password">Password</Label>
         <Input
+          required
+          autoComplete="current-password"
           id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
         />
       </div>
       {isRegistering && (
         <div className="flex flex-col gap-2">
           <Label htmlFor="name">Name</Label>
           <Input
+            required
+            autoComplete="name"
             id="name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            autoComplete="name"
-            required
           />
         </div>
       )}
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button className="w-full" disabled={isLoading} type="submit">
         {isLoading ? "Loading..." : isRegistering ? "Register" : "Sign In"}
       </Button>
       <div className="text-center text-sm mt-2">
         {isRegistering ? (
           <>
-            Already have an account?{' '}
+            Already have an account?{" "}
             <button
-              type="button"
               className="text-blue-600 hover:underline"
+              type="button"
               onClick={() => setIsRegistering(false)}
             >
               Sign In
@@ -141,10 +146,10 @@ export function LoginForm({
           </>
         ) : (
           <>
-            Don&apos;t have an account?{' '}
+            Don&apos;t have an account?{" "}
             <button
-              type="button"
               className="text-blue-600 hover:underline"
+              type="button"
               onClick={() => setIsRegistering(true)}
             >
               Register

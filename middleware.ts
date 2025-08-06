@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 // List of paths that are public and don't require authentication
 const publicPaths = [
@@ -46,7 +47,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = request.cookies.get('auth_token')?.value;
+  // Get the token using NextAuth
+  const token = await getToken({ 
+    req: request, 
+    secret: process.env.NEXTAUTH_SECRET 
+  });
+
   const isAuthPage = pathname.startsWith('/auth');
   const isAdminPath = adminPaths.some(path => pathname.startsWith(path));
   const isProtectedPath = protectedPaths.some(path => pathname.startsWith(path));
@@ -69,32 +75,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-  // For protected paths, verify the token
-  if (token && isProtectedPath) {
-    try {
-      console.log('Verifying token with backend...');
-      const verifyResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!verifyResponse.ok) {
-        console.log('Token verification failed, redirecting to login');
-        // Token is invalid or expired, clear it and redirect to login
-        const response = NextResponse.redirect(new URL('/auth', request.url));
-        response.cookies.delete('auth_token', { path: '/' });
-        return response;
-      }
-      
-      // If everything is fine, continue with the request
-      console.log('Token verified successfully');
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      const response = NextResponse.redirect(new URL('/auth', request.url));
-      response.cookies.delete('auth_token', { path: '/' });
-      return response;
+  // For admin paths, check if user has admin privileges
+  if (token && isAdminPath) {
+    const isAdmin = token.isAdmin || false;
+    if (!isAdmin) {
+      console.log('Non-admin user trying to access admin path, redirecting to home');
+      return NextResponse.redirect(new URL('/home', request.url));
     }
   }
 

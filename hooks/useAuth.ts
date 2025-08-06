@@ -1,62 +1,41 @@
-import { useState, useEffect } from 'react';
-import { getCurrentUser, isAuthenticated } from '@/lib/auth-utils';
+import { useState } from 'react';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export function useAuth() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isAuth, setIsAuth] = useState<boolean>(false);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const [authStatus, userData] = await Promise.all([
-          isAuthenticated(),
-          getCurrentUser()
-        ]);
-        
-        setIsAuth(authStatus);
-        setUser(userData);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuth(false);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
   return {
-    user,
-    isAuthenticated: isAuth,
-    loading,
+    user: session?.user,
+    isAuthenticated: status === 'authenticated',
+    loading: status === 'loading',
+    session,
   };
 }
 
 export function useLogin() {
+  const router = useRouter();
+  
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Login failed');
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
-      const data = await response.json();
-      
-      // Force a full page reload to ensure all auth state is properly updated
-      window.location.href = '/home';
-      
-      return data;
+      if (result?.ok) {
+        // Redirect to home page after successful login
+        router.push('/home');
+        return { success: true };
+      }
+
+      throw new Error('Login failed');
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -67,12 +46,12 @@ export function useLogin() {
 }
 
 export function useLogout() {
+  const router = useRouter();
+  
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-      window.location.href = '/auth';
+      await signOut({ redirect: false });
+      router.push('/auth');
     } catch (error) {
       console.error('Logout error:', error);
     }

@@ -1,22 +1,14 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
-
 import { AppSidebar } from "@/components/app-sidebar";
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
-import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
-
-interface AdminUser {
-  email: string;
-  full_name: string;
-  is_admin: boolean;
-}
+import { Tabs, Tab } from "@/components/ui/tabs";
+import { adminGetUsers, adminGetStatistics, adminGetSystemHealth, adminGetSubjectAnalytics, adminGetPracticeAnalytics, adminGetQuestionStatistics, adminGetEnrollments } from "@/lib/api";
+import { AlertCircle, Users, BookOpen, TrendingUp, Server } from "lucide-react";
 
 interface User {
   id: number;
@@ -26,145 +18,159 @@ interface User {
   created_at?: string;
 }
 
-// Define columns for the user data table
 const userColumns: ColumnDef<User>[] = [
-  {
-    accessorKey: "id",
-    header: "ID",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("id")}</div>
-    ),
-  },
-  {
-    accessorKey: "full_name",
-    header: "Name",
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("full_name")}</div>
-    ),
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
+  { accessorKey: "id", header: "ID" },
+  { accessorKey: "full_name", header: "Name" },
+  { accessorKey: "email", header: "Email" },
   {
     accessorKey: "is_admin",
     header: "Role",
-    cell: ({ row }) => {
-      const isAdmin = row.getValue("is_admin") as boolean;
-      return (
-        <Badge variant={isAdmin ? "default" : "secondary"}>
-          {isAdmin ? "Admin" : "User"}
-        </Badge>
-      );
-    },
+    cell: ({ row }) => (
+      <Badge variant={row.getValue("is_admin") ? "default" : "secondary"}>
+        {row.getValue("is_admin") ? "Admin" : "User"}
+      </Badge>
+    ),
   },
 ];
 
 export default function AdminPage() {
-  const [checking, setChecking] = useState(true);
-  const [user, setUser] = useState<AdminUser | null>(null);
+  const [tab, setTab] = useState("users");
   const [users, setUsers] = useState<User[]>([]);
+  const [stats, setStats] = useState<any>(null);
+  const [systemHealth, setSystemHealth] = useState<any>(null);
+  const [subjectAnalytics, setSubjectAnalytics] = useState<any[]>([]);
+  const [practiceAnalytics, setPracticeAnalytics] = useState<any>(null);
+  const [questionStats, setQuestionStats] = useState<any>(null);
+  const [enrollments, setEnrollments] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const token =
-    typeof window !== "undefined" ? window.localStorage.getItem("token") : null;
 
   useEffect(() => {
-    if (!token) {
-      router.replace("/auth");
-      return;
+    async function fetchAll() {
+      setLoading(true);
+      try {
+        const [usersRes, statsRes, healthRes, subjRes, pracRes, quesRes, enrollRes] = await Promise.all([
+          adminGetUsers(),
+          adminGetStatistics(),
+          adminGetSystemHealth(),
+          adminGetSubjectAnalytics(),
+          adminGetPracticeAnalytics(),
+          adminGetQuestionStatistics(),
+          adminGetEnrollments(),
+        ]);
+        if (usersRes.data) setUsers(usersRes.data);
+        if (statsRes.data) setStats(statsRes.data);
+        if (healthRes.data) setSystemHealth(healthRes.data);
+        if (subjRes.data) setSubjectAnalytics(subjRes.data);
+        if (pracRes.data) setPracticeAnalytics(pracRes.data);
+        if (quesRes.data) setQuestionStats(quesRes.data);
+        if (enrollRes.data) setEnrollments(enrollRes.data);
+        setError(null);
+      } catch (e) {
+        setError("Failed to load admin data");
+      } finally {
+        setLoading(false);
+      }
     }
-    
-    fetch("http://localhost:8000/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then((data) => {
-        if (!data.is_admin) {
-          router.replace("/home");
-        } else {
-          setUser(data);
-        }
-      })
-      .catch((err) => {
-        console.error("Auth error:", err);
-        setError("Failed to authenticate. Please check if the backend server is running.");
-        router.replace("/auth");
-      })
-      .finally(() => setChecking(false));
-  }, [router, token]);
+    fetchAll();
+  }, []);
 
-  useEffect(() => {
-    if (!token) return;
-    
-    fetch("http://localhost:8000/users", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch users");
-        return res.json();
-      })
-      .then((data) => {
-        setUsers(Array.isArray(data) ? data : []);
-      })
-      .catch((err) => {
-        console.error("Users fetch error:", err);
-        setError("Failed to load users. Please check if the backend server is running.");
-        setUsers([]); // Set empty array to prevent DataTable errors
-      });
-  }, [token]);
-
-  if (checking || !user) {
-    if (error) {
-      return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h2 className="text-lg font-semibold text-red-600 mb-2">Error</h2>
-            <p className="text-gray-600">{error}</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Make sure the backend server is running on port 8000
-            </p>
-          </div>
-        </div>
-      );
-    }
-    return null;
+  if (loading) {
+    return <div className="container mx-auto py-12 text-center">Loading admin dashboard...</div>;
+  }
+  if (error) {
+    return <div className="container mx-auto py-12 text-center text-red-600">{error}</div>;
   }
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
+    <SidebarProvider style={{ "--sidebar-width": "calc(var(--spacing) * 72)", "--header-height": "calc(var(--spacing) * 12)" } as React.CSSProperties}>
       <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
-              </div>
-              {error && (
-                <div className="px-4 lg:px-6">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-800">{error}</p>
-                  </div>
-                </div>
-              )}
-              <div className="px-4 lg:px-6">
-                <DataTable columns={userColumns} data={users} />
+        <div className="container mx-auto py-6">
+          <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
+            <Server size={28} /> Admin Dashboard
+          </h1>
+          <Tabs value={tab} onValueChange={setTab} className="mb-6">
+            <Tab value="users" label={<span><Users size={16} /> Users</span>} />
+            <Tab value="subjects" label={<span><BookOpen size={16} /> Subjects</span>} />
+            <Tab value="questions" label={<span>Questions</span>} />
+            <Tab value="analytics" label={<span><TrendingUp size={16} /> Analytics</span>} />
+            <Tab value="system" label={<span><Server size={16} /> System</span>} />
+          </Tabs>
+          {tab === "users" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Users</h2>
+              <DataTable columns={userColumns} data={users} />
+            </div>
+          )}
+          {tab === "subjects" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Subjects Analytics</h2>
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-sm border">
+                  <thead>
+                    <tr className="bg-gray-100 dark:bg-zinc-800">
+                      <th className="p-2 text-left">Subject</th>
+                      <th className="p-2 text-left">Enrollments</th>
+                      <th className="p-2 text-left">Questions</th>
+                      <th className="p-2 text-left">Avg. Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subjectAnalytics.map((s, idx) => (
+                      <tr key={idx} className="border-b">
+                        <td className="p-2">{s.subject?.name}</td>
+                        <td className="p-2">{s.enrollment_count}</td>
+                        <td className="p-2">{s.question_count}</td>
+                        <td className="p-2">{s.average_score}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
+          )}
+          {tab === "questions" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Question Statistics</h2>
+              {questionStats && (
+                <div className="space-y-2">
+                  <div>Total Questions: {questionStats.total_questions}</div>
+                  <div>Active Questions: {questionStats.active_questions}</div>
+                  <div>By Difficulty: Easy {questionStats.by_difficulty?.easy}, Medium {questionStats.by_difficulty?.medium}, Hard {questionStats.by_difficulty?.hard}</div>
+                </div>
+              )}
+            </div>
+          )}
+          {tab === "analytics" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Practice Analytics</h2>
+              {practiceAnalytics && (
+                <div className="space-y-2">
+                  <div>Total Sessions: {practiceAnalytics.overall?.total_sessions}</div>
+                  <div>Average Score: {practiceAnalytics.overall?.average_score}</div>
+                  <div>Top Users: {practiceAnalytics.top_users?.map((u: any) => u.name).join(", ")}</div>
+                </div>
+              )}
+            </div>
+          )}
+          {tab === "system" && (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">System Health</h2>
+              {systemHealth && (
+                <div className="space-y-2">
+                  <div>Status: {systemHealth.status}</div>
+                  <div>Database: {systemHealth.database}</div>
+                  <div>Total Users: {systemHealth.statistics?.total_users}</div>
+                  <div>Inactive Subjects: {systemHealth.statistics?.inactive_subjects}</div>
+                  <div>Inactive Questions: {systemHealth.statistics?.inactive_questions}</div>
+                  <div>New Users (24h): {systemHealth.recent_activity?.new_users_24h}</div>
+                  <div>Sessions (24h): {systemHealth.recent_activity?.sessions_24h}</div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>

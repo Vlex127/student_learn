@@ -1,0 +1,29 @@
+# StudentLearn Backend: Easy Setup Guide
+
+1. Go to the backend directory:
+   cd backend
+
+2. (Optional, but recommended) Create a Python virtual environment:
+   python3 -m venv venv
+   source venv/bin/activate
+
+3. Install dependencies:
+   pip install --break-system-packages -r requirements.txt
+
+4. Copy and edit the environment file:
+   cp env.example .env
+   # Edit .env to set your secrets and config (nano .env or use your editor)
+
+5. Generate the database (SQLite by default):
+   python3 -c "from app.database import engine; from app.models import Base; Base.metadata.create_all(bind=engine)"
+
+6. (Recommended) Create an admin user:
+   python3 create_admin.py
+
+7. Start the backend server:
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+8. Open the API docs in your browser:
+   http://localhost:8000/docs
+
+# For production, use a real database and secure your .env!

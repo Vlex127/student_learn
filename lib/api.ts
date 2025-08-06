@@ -235,3 +235,123 @@ export async function checkEnrollmentStatus(courseId: number): Promise<ApiRespon
     },
   });
 }
+
+// USER: Get user statistics
+export async function getUserStatistics(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/auth/me/statistics`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// USER: Get practice history
+export async function getPracticeHistory(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/my-courses/practice-history`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get all users
+export async function adminGetUsers(): Promise<ApiResponse<any[]>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any[]>(`/admin/users`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get user details
+export async function adminGetUser(userId: number): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/users/${userId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Update user
+export async function adminUpdateUser(userId: number, data: any): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/users/${userId}`, {
+    method: "PUT",
+    headers: { Authorization: `Bearer ${token}` },
+    body: JSON.stringify(data),
+  });
+}
+
+// ADMIN: Toggle admin status
+export async function adminToggleUserAdmin(userId: number): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/users/${userId}/toggle-admin`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get system statistics
+export async function adminGetStatistics(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/statistics`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get system health
+export async function adminGetSystemHealth(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/system/health`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get enrollments
+export async function adminGetEnrollments(): Promise<ApiResponse<any[]>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any[]>(`/admin/enrollments`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get practice analytics
+export async function adminGetPracticeAnalytics(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/practice-analytics`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get subject analytics
+export async function adminGetSubjectAnalytics(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/subjects/analytics`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get question statistics
+export async function adminGetQuestionStatistics(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/questions/statistics`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}
+
+// ADMIN: Get system logs (placeholder)
+export async function adminGetSystemLogs(): Promise<ApiResponse<any>> {
+  const token = getAuthToken();
+  if (!token) return { error: "Authentication required." };
+  return apiCall<any>(`/admin/system/logs`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+}

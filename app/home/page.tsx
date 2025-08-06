@@ -153,13 +153,21 @@ export default function HomePage() {
       {/* Display user info if logged in */}
       {status === "authenticated" && session?.user ? (
         <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-          <div className="text-lg font-semibold">Welcome, {session.user.name || session.user.email}!</div>
-          <div className="text-sm text-gray-600 dark:text-gray-300">Email: {session.user.email}</div>
+          <div className="text-lg font-semibold">
+            Welcome, {session.user.name || session.user.email}!
+          </div>
+          <div className="text-sm text-gray-600 dark:text-gray-300">
+            Email: {session.user.email}
+          </div>
         </div>
       ) : status === "loading" ? (
-        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-900/30 rounded-lg">Loading user info...</div>
+        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-900/30 rounded-lg">
+          Loading user info...
+        </div>
       ) : (
-        <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">Not logged in</div>
+        <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">
+          Not logged in
+        </div>
       )}
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl p-6 md:p-8 text-white">

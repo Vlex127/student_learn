@@ -7,7 +7,11 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "jsmith@example.com" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "jsmith@example.com",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
@@ -17,30 +21,37 @@ export const authOptions: NextAuthOptions = {
 
         try {
           // Call your backend API to verify user
-          const res = await fetch(`${process.env.BACKEND_URL || "http://localhost:8000"}/api/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-            }),
-          });
-          
+          const res = await fetch(
+            `${process.env.BACKEND_URL || "http://localhost:8000"}/api/login`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: credentials.email,
+                password: credentials.password,
+              }),
+            },
+          );
+
           if (!res.ok) return null;
-          
+
           const user = await res.json();
+
           if (user && user.email) {
             return {
               id: user.id || user.user_id || "unknown",
               email: user.email,
               name: user.name || user.full_name || "Unknown",
               isAdmin: user.is_admin || false,
-              accessToken: user.access_token || user.accessToken || "default-token",
+              accessToken:
+                user.access_token || user.accessToken || "default-token",
             };
           }
+
           return null;
         } catch (error) {
           console.error("Authorization error:", error);
+
           return null;
         }
       },
@@ -65,6 +76,7 @@ export const authOptions: NextAuthOptions = {
         token.isAdmin = user.isAdmin;
         token.accessToken = user.accessToken;
       }
+
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
@@ -77,12 +89,14 @@ export const authOptions: NextAuthOptions = {
         };
         session.accessToken = token.accessToken as string;
       }
+
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

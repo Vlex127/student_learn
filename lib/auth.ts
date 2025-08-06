@@ -20,6 +20,7 @@ export class AuthService {
 
   static getToken(): string | null {
     if (typeof window === "undefined") return null;
+
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
@@ -45,32 +46,44 @@ export class AuthService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: "Login failed" }));
+      const errorData = await response
+        .json()
+        .catch(() => ({ detail: "Login failed" }));
+
       throw new Error(errorData.detail || "Login failed");
     }
 
     const data: LoginResponse = await response.json();
+
     this.setToken(data.access_token);
 
     // Fetch user info
     const user = await this.getCurrentUser();
+
     return user;
   }
 
-  static async register(email: string, password: string, fullName: string): Promise<User> {
+  static async register(
+    email: string,
+    password: string,
+    fullName: string,
+  ): Promise<User> {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        email, 
-        password, 
+      body: JSON.stringify({
+        email,
+        password,
         full_name: fullName,
-        is_admin: false 
+        is_admin: false,
       }),
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ detail: "Registration failed" }));
+      const errorData = await response
+        .json()
+        .catch(() => ({ detail: "Registration failed" }));
+
       throw new Error(errorData.detail || "Registration failed");
     }
 
@@ -80,6 +93,7 @@ export class AuthService {
 
   static async getCurrentUser(): Promise<User> {
     const token = this.getToken();
+
     if (!token) {
       throw new Error("No authentication token found");
     }
@@ -106,7 +120,10 @@ export class AuthService {
     }
   }
 
-  static async apiCall(endpoint: string, options: RequestInit = {}): Promise<Response> {
+  static async apiCall(
+    endpoint: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
     const token = this.getToken();
     const headers = {
       "Content-Type": "application/json",

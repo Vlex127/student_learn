@@ -12,14 +12,13 @@ import {
   X,
 } from "lucide-react";
 
-import { 
-  getCourses, 
-  Course, 
-  transformCourseForUI, 
-  enrollInCourse, 
-  unenrollFromCourse, 
+import {
+  getCourses,
+  Course,
+  transformCourseForUI,
+  enrollInCourse,
+  unenrollFromCourse,
   getMyEnrolledCourses,
-  checkEnrollmentStatus 
 } from "@/lib/api";
 
 export default function LibraryPage() {
@@ -29,28 +28,33 @@ export default function LibraryPage() {
   const [myCourses, setMyCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [enrollmentStatus, setEnrollmentStatus] = useState<Record<number, boolean>>({});
-  const [enrollmentLoading, setEnrollmentLoading] = useState<Record<number, boolean>>({});
+  const [enrollmentStatus, setEnrollmentStatus] = useState<
+    Record<number, boolean>
+  >({});
+  const [enrollmentLoading, setEnrollmentLoading] = useState<
+    Record<number, boolean>
+  >({});
   const [showMyCoursesOnly, setShowMyCoursesOnly] = useState(false);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  
+
   // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/session');
+        const response = await fetch("/api/auth/session");
         const { user } = await response.json();
+
         setIsAuthenticated(!!user);
       } catch (error) {
-        console.error('Error checking auth status:', error);
+        console.error("Error checking auth status:", error);
         setIsAuthenticated(false);
       }
     };
-    
+
     checkAuth();
   }, []);
 
@@ -66,7 +70,7 @@ export default function LibraryPage() {
 
   // Get currently enrolled courses from all courses based on enrollment status
   const currentlyEnrolledCourses = useMemo(() => {
-    return courses.filter(course => enrollmentStatus[course.id]);
+    return courses.filter((course) => enrollmentStatus[course.id]);
   }, [courses, enrollmentStatus]);
 
   // Fetch all courses and enrollment status
@@ -76,32 +80,43 @@ export default function LibraryPage() {
       try {
         // Fetch all available courses
         const coursesResult = await getCourses();
+
         if (coursesResult.data) {
-          const transformedCourses = coursesResult.data.map(transformCourseForUI);
+          const transformedCourses =
+            coursesResult.data.map(transformCourseForUI);
+
           setCourses(transformedCourses);
         } else if (coursesResult.error) {
           setError(coursesResult.error);
+
           return;
         }
 
         // Fetch user's enrolled courses
         const enrolledResult = await getMyEnrolledCourses();
+
         if (enrolledResult.data) {
-          const transformedEnrolled = enrolledResult.data.map(transformCourseForUI);
+          const transformedEnrolled =
+            enrolledResult.data.map(transformCourseForUI);
+
           setMyCourses(transformedEnrolled);
-          
+
           // Update enrollment status
           const statusMap: Record<number, boolean> = {};
-          transformedEnrolled.forEach(course => {
+
+          transformedEnrolled.forEach((course) => {
             statusMap[course.id] = true;
           });
           setEnrollmentStatus(statusMap);
         } else if (enrolledResult.error) {
-          console.error('Error fetching enrolled courses:', enrolledResult.error);
+          console.error(
+            "Error fetching enrolled courses:",
+            enrolledResult.error,
+          );
         }
       } catch (error) {
-        console.error('Error in fetchData:', error);
-        setError('Failed to load course data');
+        console.error("Error in fetchData:", error);
+        setError("Failed to load course data");
       } finally {
         setLoading(false);
       }
@@ -113,13 +128,15 @@ export default function LibraryPage() {
   const handleEnrollment = async (courseId: number, isEnrolled: boolean) => {
     if (!isAuthenticated) {
       window.location.href = `/auth?callbackUrl=${encodeURIComponent(window.location.pathname)}`;
+
       return;
     }
 
-    setEnrollmentLoading(prev => ({ ...prev, [courseId]: true }));
+    setEnrollmentLoading((prev) => ({ ...prev, [courseId]: true }));
 
     try {
       let result;
+
       if (isEnrolled) {
         result = await unenrollFromCourse(courseId);
       } else {
@@ -129,38 +146,48 @@ export default function LibraryPage() {
       if (result.error) {
         console.error("Enrollment error:", result.error);
         showMessage("error", result.error);
-        
+
         // If it's an auth error, update auth state
-        if (result.error.includes("Authentication") || result.error.includes("log in")) {
+        if (
+          result.error.includes("Authentication") ||
+          result.error.includes("log in")
+        ) {
           setIsAuthenticated(false);
         }
       } else {
         const action = isEnrolled ? "removed from" : "added to";
+
         showMessage("success", `Course ${action} your list!`);
-        
+
         // Update enrollment status immediately for real-time UI updates
-        setEnrollmentStatus(prev => ({
+        setEnrollmentStatus((prev) => ({
           ...prev,
-          [courseId]: !isEnrolled
+          [courseId]: !isEnrolled,
         }));
 
         // Update myCourses array for the toggle functionality
         if (isEnrolled) {
           // Remove course from myCourses
-          setMyCourses(prev => prev.filter(course => course.id !== courseId));
+          setMyCourses((prev) =>
+            prev.filter((course) => course.id !== courseId),
+          );
         } else {
           // Add course to myCourses
-          const courseToAdd = courses.find(c => c.id === courseId);
+          const courseToAdd = courses.find((c) => c.id === courseId);
+
           if (courseToAdd) {
-            setMyCourses(prev => [...prev, courseToAdd]);
+            setMyCourses((prev) => [...prev, courseToAdd]);
           }
         }
       }
     } catch (error) {
       console.error("Enrollment error:", error);
-      showMessage("error", "Failed to update course enrollment. Please try again.");
+      showMessage(
+        "error",
+        "Failed to update course enrollment. Please try again.",
+      );
     } finally {
-      setEnrollmentLoading(prev => ({ ...prev, [courseId]: false }));
+      setEnrollmentLoading((prev) => ({ ...prev, [courseId]: false }));
     }
   };
 
@@ -169,6 +196,7 @@ export default function LibraryPage() {
 
     if (files) {
       const fileNames = Array.from(files).map((file) => file.name);
+
       setUploadedFiles((prev) => [...prev, ...fileNames]);
     }
   };
@@ -207,16 +235,18 @@ export default function LibraryPage() {
     <div className="space-y-8">
       {/* Success/Error Message */}
       {message && (
-        <div className={`p-4 rounded-lg ${
-          message.type === "success" 
-            ? "bg-green-50 border border-green-200 text-green-800" 
-            : "bg-red-50 border border-red-200 text-red-800"
-        }`}>
+        <div
+          className={`p-4 rounded-lg ${
+            message.type === "success"
+              ? "bg-green-50 border border-green-200 text-green-800"
+              : "bg-red-50 border border-red-200 text-red-800"
+          }`}
+        >
           <div className="flex items-center justify-between">
             <span>{message.text}</span>
-            <button 
-              onClick={() => setMessage(null)}
+            <button
               className="text-current hover:opacity-70"
+              onClick={() => setMessage(null)}
             >
               <X size={16} />
             </button>
@@ -290,12 +320,12 @@ export default function LibraryPage() {
             {isAuthenticated && (
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setShowMyCoursesOnly(!showMyCoursesOnly)}
                   className={`px-3 py-1 rounded-lg text-sm transition ${
                     showMyCoursesOnly
                       ? "bg-indigo-600 text-white"
                       : "bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-gray-300"
                   }`}
+                  onClick={() => setShowMyCoursesOnly(!showMyCoursesOnly)}
                 >
                   My Courses ({enrolledCoursesCount})
                 </button>
@@ -335,18 +365,22 @@ export default function LibraryPage() {
                   >
                     <BookOpen className="text-white" size={24} />
                   </div>
-                  
+
                   {/* Enrollment Button */}
                   {isAuthenticated && (
                     <button
-                      onClick={() => handleEnrollment(course.id, isEnrolled)}
-                      disabled={isLoading}
                       className={`p-2 rounded-lg transition ${
                         isEnrolled
                           ? "bg-green-100 text-green-600 hover:bg-green-200"
                           : "bg-gray-100 dark:bg-zinc-800 text-gray-600 hover:bg-gray-200 dark:hover:bg-zinc-700"
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
-                      title={isEnrolled ? "Remove from my courses" : "Add to my courses"}
+                      disabled={isLoading}
+                      title={
+                        isEnrolled
+                          ? "Remove from my courses"
+                          : "Add to my courses"
+                      }
+                      onClick={() => handleEnrollment(course.id, isEnrolled)}
                     >
                       {isLoading ? (
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current" />
@@ -362,7 +396,7 @@ export default function LibraryPage() {
                 <h3 className="text-lg font-semibold mb-2 line-clamp-2">
                   {course.title || course.name}
                 </h3>
-                
+
                 {course.description && (
                   <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
                     {course.description}
@@ -402,8 +436,8 @@ export default function LibraryPage() {
               {searchTerm
                 ? "Try adjusting your search terms"
                 : showMyCoursesOnly
-                ? "Start by adding some courses to your personal list"
-                : "No courses are currently available"}
+                  ? "Start by adding some courses to your personal list"
+                  : "No courses are currently available"}
             </p>
           </div>
         )}

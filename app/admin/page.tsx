@@ -2,13 +2,22 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
+import { Users, BookOpen, TrendingUp, Server } from "lucide-react";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataTable } from "@/components/data-table";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, Tab } from "@/components/ui/tabs";
-import { adminGetUsers, adminGetStatistics, adminGetSystemHealth, adminGetSubjectAnalytics, adminGetPracticeAnalytics, adminGetQuestionStatistics, adminGetEnrollments } from "@/lib/api";
-import { AlertCircle, Users, BookOpen, TrendingUp, Server } from "lucide-react";
+import {
+  adminGetUsers,
+  adminGetStatistics,
+  adminGetSystemHealth,
+  adminGetSubjectAnalytics,
+  adminGetPracticeAnalytics,
+  adminGetQuestionStatistics,
+  adminGetEnrollments,
+} from "@/lib/api";
 
 interface User {
   id: number;
@@ -50,7 +59,15 @@ export default function AdminPage() {
     async function fetchAll() {
       setLoading(true);
       try {
-        const [usersRes, statsRes, healthRes, subjRes, pracRes, quesRes, enrollRes] = await Promise.all([
+        const [
+          usersRes,
+          statsRes,
+          healthRes,
+          subjRes,
+          pracRes,
+          quesRes,
+          enrollRes,
+        ] = await Promise.all([
           adminGetUsers(),
           adminGetStatistics(),
           adminGetSystemHealth(),
@@ -59,6 +76,7 @@ export default function AdminPage() {
           adminGetQuestionStatistics(),
           adminGetEnrollments(),
         ]);
+
         if (usersRes.data) setUsers(usersRes.data);
         if (statsRes.data) setStats(statsRes.data);
         if (healthRes.data) setSystemHealth(healthRes.data);
@@ -77,26 +95,69 @@ export default function AdminPage() {
   }, []);
 
   if (loading) {
-    return <div className="container mx-auto py-12 text-center">Loading admin dashboard...</div>;
+    return (
+      <div className="container mx-auto py-12 text-center">
+        Loading admin dashboard...
+      </div>
+    );
   }
   if (error) {
-    return <div className="container mx-auto py-12 text-center text-red-600">{error}</div>;
+    return (
+      <div className="container mx-auto py-12 text-center text-red-600">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <SidebarProvider style={{ "--sidebar-width": "calc(var(--spacing) * 72)", "--header-height": "calc(var(--spacing) * 12)" } as React.CSSProperties}>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+    >
       <AppSidebar variant="inset" />
       <SidebarInset>
         <div className="container mx-auto py-6">
           <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
             <Server size={28} /> Admin Dashboard
           </h1>
-          <Tabs value={tab} onValueChange={setTab} className="mb-6">
-            <Tab value="users" label={<span><Users size={16} /> Users</span>} />
-            <Tab value="subjects" label={<span><BookOpen size={16} /> Subjects</span>} />
-            <Tab value="questions" label={<span>Questions</span>} />
-            <Tab value="analytics" label={<span><TrendingUp size={16} /> Analytics</span>} />
-            <Tab value="system" label={<span><Server size={16} /> System</span>} />
+          <Tabs className="mb-6" value={tab} onValueChange={setTab}>
+            <Tab
+              label={
+                <span>
+                  <Users size={16} /> Users
+                </span>
+              }
+              value="users"
+            />
+            <Tab
+              label={
+                <span>
+                  <BookOpen size={16} /> Subjects
+                </span>
+              }
+              value="subjects"
+            />
+            <Tab label={<span>Questions</span>} value="questions" />
+            <Tab
+              label={
+                <span>
+                  <TrendingUp size={16} /> Analytics
+                </span>
+              }
+              value="analytics"
+            />
+            <Tab
+              label={
+                <span>
+                  <Server size={16} /> System
+                </span>
+              }
+              value="system"
+            />
           </Tabs>
           {tab === "users" && (
             <div>
@@ -133,12 +194,18 @@ export default function AdminPage() {
           )}
           {tab === "questions" && (
             <div>
-              <h2 className="text-xl font-semibold mb-2">Question Statistics</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                Question Statistics
+              </h2>
               {questionStats && (
                 <div className="space-y-2">
                   <div>Total Questions: {questionStats.total_questions}</div>
                   <div>Active Questions: {questionStats.active_questions}</div>
-                  <div>By Difficulty: Easy {questionStats.by_difficulty?.easy}, Medium {questionStats.by_difficulty?.medium}, Hard {questionStats.by_difficulty?.hard}</div>
+                  <div>
+                    By Difficulty: Easy {questionStats.by_difficulty?.easy},
+                    Medium {questionStats.by_difficulty?.medium}, Hard{" "}
+                    {questionStats.by_difficulty?.hard}
+                  </div>
                 </div>
               )}
             </div>
@@ -148,9 +215,18 @@ export default function AdminPage() {
               <h2 className="text-xl font-semibold mb-2">Practice Analytics</h2>
               {practiceAnalytics && (
                 <div className="space-y-2">
-                  <div>Total Sessions: {practiceAnalytics.overall?.total_sessions}</div>
-                  <div>Average Score: {practiceAnalytics.overall?.average_score}</div>
-                  <div>Top Users: {practiceAnalytics.top_users?.map((u: any) => u.name).join(", ")}</div>
+                  <div>
+                    Total Sessions: {practiceAnalytics.overall?.total_sessions}
+                  </div>
+                  <div>
+                    Average Score: {practiceAnalytics.overall?.average_score}
+                  </div>
+                  <div>
+                    Top Users:{" "}
+                    {practiceAnalytics.top_users
+                      ?.map((u: any) => u.name)
+                      .join(", ")}
+                  </div>
                 </div>
               )}
             </div>
@@ -163,10 +239,21 @@ export default function AdminPage() {
                   <div>Status: {systemHealth.status}</div>
                   <div>Database: {systemHealth.database}</div>
                   <div>Total Users: {systemHealth.statistics?.total_users}</div>
-                  <div>Inactive Subjects: {systemHealth.statistics?.inactive_subjects}</div>
-                  <div>Inactive Questions: {systemHealth.statistics?.inactive_questions}</div>
-                  <div>New Users (24h): {systemHealth.recent_activity?.new_users_24h}</div>
-                  <div>Sessions (24h): {systemHealth.recent_activity?.sessions_24h}</div>
+                  <div>
+                    Inactive Subjects:{" "}
+                    {systemHealth.statistics?.inactive_subjects}
+                  </div>
+                  <div>
+                    Inactive Questions:{" "}
+                    {systemHealth.statistics?.inactive_questions}
+                  </div>
+                  <div>
+                    New Users (24h):{" "}
+                    {systemHealth.recent_activity?.new_users_24h}
+                  </div>
+                  <div>
+                    Sessions (24h): {systemHealth.recent_activity?.sessions_24h}
+                  </div>
                 </div>
               )}
             </div>

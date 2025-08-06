@@ -1,6 +1,8 @@
 import React from "react";
-import { Providers } from "./providers";
 import { SessionProvider } from "next-auth/react";
+
+import { Providers } from "./providers";
+
 import { Toaster } from "@/components/ui/toaster";
 import "../styles/globals.css";
 
@@ -10,12 +12,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning lang="en">
       <body>
         <SessionProvider>
-          <Providers>
-            {children}
-          </Providers>
+          <Providers>{children}</Providers>
         </SessionProvider>
         <Toaster />
       </body>

@@ -40,7 +40,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 export const schema = z.object({
   id: z.number(),
@@ -75,23 +75,22 @@ export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => (
-      <Badge variant="outline">{row.getValue("type")}</Badge>
-    ),
+    cell: ({ row }) => <Badge variant="outline">{row.getValue("type")}</Badge>,
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
+
       return (
         <Badge
           variant={
             status === "Done"
               ? "default"
               : status === "In Progress"
-              ? "secondary"
-              : "outline"
+                ? "secondary"
+                : "outline"
           }
         >
           {status}
@@ -124,7 +123,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -150,7 +149,10 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <Tabs className="w-full flex-col justify-start gap-6" defaultValue="outline">
+    <Tabs
+      className="w-full flex-col justify-start gap-6"
+      defaultValue="outline"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Button size="sm" variant="outline">
@@ -161,7 +163,7 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button size="sm" variant="outline">
                 <IconLayoutColumns className="mr-2 h-4 w-4" />
                 View
                 <IconChevronDown className="ml-2 h-4 w-4" />
@@ -175,8 +177,8 @@ export function DataTable<TData, TValue>({
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
-                      className="capitalize"
                       checked={column.getIsVisible()}
+                      className="capitalize"
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }
@@ -203,7 +205,7 @@ export function DataTable<TData, TValue>({
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     );
@@ -222,7 +224,7 @@ export function DataTable<TData, TValue>({
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
-                          cell.getContext()
+                          cell.getContext(),
                         )}
                       </TableCell>
                     ))}
@@ -231,8 +233,8 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length}
                     className="h-24 text-center"
+                    colSpan={columns.length}
                   >
                     No results.
                   </TableCell>
@@ -251,11 +253,11 @@ export function DataTable<TData, TValue>({
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium">Rows per page</p>
               <select
+                className="h-8 w-[70px] rounded border border-input bg-background px-3 py-1 text-sm"
                 value={`${table.getState().pagination.pageSize}`}
                 onChange={(e) => {
                   table.setPageSize(Number(e.target.value));
                 }}
-                className="h-8 w-[70px] rounded border border-input bg-background px-3 py-1 text-sm"
               >
                 {[10, 20, 30, 40, 50].map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
@@ -270,37 +272,37 @@ export function DataTable<TData, TValue>({
             </div>
             <div className="flex items-center space-x-2">
               <Button
-                variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
+                variant="outline"
+                onClick={() => table.setPageIndex(0)}
               >
                 <span className="sr-only">Go to first page</span>
                 <IconChevronsLeft className="h-4 w-4" />
               </Button>
               <Button
-                variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
+                variant="outline"
+                onClick={() => table.previousPage()}
               >
                 <span className="sr-only">Go to previous page</span>
                 <IconChevronLeft className="h-4 w-4" />
               </Button>
               <Button
-                variant="outline"
                 className="h-8 w-8 p-0"
-                onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
+                variant="outline"
+                onClick={() => table.nextPage()}
               >
                 <span className="sr-only">Go to next page</span>
                 <IconChevronRight className="h-4 w-4" />
               </Button>
               <Button
-                variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
+                variant="outline"
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
               >
                 <span className="sr-only">Go to last page</span>
                 <IconChevronsRight className="h-4 w-4" />

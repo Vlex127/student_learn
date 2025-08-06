@@ -15,10 +15,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { getCurrentUser } from "@/lib/auth-utils";
-import { usePathname } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
+import { usePathname } from "next/navigation";
 
+import { getCurrentUser } from "@/lib/auth-utils";
+import { useToast } from "@/hooks/use-toast";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -101,30 +101,30 @@ export function NavStudentLearn() {
   const fetchUser = useCallback(async () => {
     // Only fetch if it's been at least 2 seconds since last check
     if (Date.now() - lastChecked < 2000) return;
-    
+
     setLastChecked(Date.now());
-    
+
     try {
       setIsLoading(true);
       const userData = await getCurrentUser();
-      
+
       if (userData) {
         setUser({
           id: userData.id,
-          name: userData.name || 'User',
-          email: userData.email || '',
-          avatar: userData.avatar || '/face.svg',
-          role: userData.role
+          name: userData.name || "User",
+          email: userData.email || "",
+          avatar: userData.avatar || "/face.svg",
+          role: userData.role,
         });
       } else {
         setUser(null);
       }
     } catch (error) {
-      console.error('Failed to fetch user:', error);
+      console.error("Failed to fetch user:", error);
       toast({
-        title: 'Error',
-        description: 'Failed to load user data',
-        variant: 'destructive',
+        title: "Error",
+        description: "Failed to load user data",
+        variant: "destructive",
       });
       setUser(null);
     } finally {
@@ -140,6 +140,7 @@ export function NavStudentLearn() {
   // Set up polling to check for auth state changes
   useEffect(() => {
     const interval = setInterval(fetchUser, 10000); // Check every 10 seconds
+
     return () => clearInterval(interval);
   }, [fetchUser]);
 
@@ -154,8 +155,9 @@ export function NavStudentLearn() {
       fetchUser();
     };
 
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
+    window.addEventListener("focus", handleFocus);
+
+    return () => window.removeEventListener("focus", handleFocus);
   }, [fetchUser]);
 
   return (
@@ -163,24 +165,25 @@ export function NavStudentLearn() {
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         {isLoading ? (
           <div className="flex items-center space-x-3 animate-pulse">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700" />
             <div className="space-y-2">
-              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
-              <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded" />
+              <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
             </div>
           </div>
         ) : user ? (
           <div className="flex items-center space-x-3">
             <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700">
               <Image
-                src={user.avatar || '/face.svg'}
                 alt={user.name}
-                width={40}
-                height={40}
                 className="object-cover"
+                height={40}
+                src={user.avatar || "/face.svg"}
+                width={40}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.src = '/face.svg';
+
+                  target.src = "/face.svg";
                 }}
               />
             </div>
@@ -195,9 +198,9 @@ export function NavStudentLearn() {
           </div>
         ) : (
           <div className="text-center py-2">
-            <Link 
-              href="/auth" 
+            <Link
               className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+              href="/auth"
             >
               <User className="w-4 h-4 mr-2" />
               Sign in
@@ -213,9 +216,9 @@ export function NavStudentLearn() {
             {navigationItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <Link 
-                    href={item.url} 
+                  <Link
                     className="flex items-center space-x-2"
+                    href={item.url}
                     onClick={() => fetchUser()} // Refresh user data when navigating
                   >
                     <item.icon className="w-5 h-5" />
@@ -233,9 +236,9 @@ export function NavStudentLearn() {
             {secondaryItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
-                  <Link 
-                    href={item.url} 
+                  <Link
                     className="flex items-center space-x-2"
+                    href={item.url}
                     onClick={() => fetchUser()} // Refresh user data when navigating
                   >
                     <item.icon className="w-5 h-5" />

@@ -1,22 +1,32 @@
 'use client';
 
 import { signOut } from 'next-auth/react';
-import { Button } from '@heroui/button';
-import { LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-export function SignOutButton() {
+interface SignOutButtonProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export function SignOutButton({ className, children }: SignOutButtonProps) {
   const handleSignOut = async () => {
-    await signOut({ callbackUrl: '/auth' });
+    try {
+      await signOut({ 
+        callbackUrl: '/auth',
+        redirect: true 
+      });
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
   };
 
   return (
     <Button 
-      variant="ghost" 
-      onClick={handleSignOut}
-      className="flex items-center gap-2"
+      onClick={handleSignOut} 
+      variant="outline" 
+      className={className}
     >
-      <LogOut className="h-4 w-4" />
-      Sign Out
+      {children || 'Sign Out'}
     </Button>
   );
 }

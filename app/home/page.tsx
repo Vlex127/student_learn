@@ -16,8 +16,10 @@ import {
   Award,
 } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 export default function HomePage() {
+  const { data: session, status } = useSession();
   // For draggable chat icon
   const [chatPos, setChatPos] = useState({ x: 20, y: 80 });
   const [dragging, setDragging] = useState(false);
@@ -27,12 +29,12 @@ export default function HomePage() {
   const chatRef = useRef<HTMLDivElement>(null);
 
   // Mock user data (replace with real data from API)
-  const userStats = {
-    testsCompleted: 24,
-    averageScore: 87,
-    studyStreak: 7,
-    totalStudyTime: 45,
-  };
+  // const userStats = {
+  //   testsCompleted: 24,
+  //   averageScore: 87,
+  //   studyStreak: 7,
+  //   totalStudyTime: 45,
+  // };
 
   const recentActivity = [
     { subject: "Mathematics", score: 92, date: "Today" },
@@ -148,6 +150,17 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 md:space-y-8">
+      {/* Display user info if logged in */}
+      {status === "authenticated" && session?.user ? (
+        <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+          <div className="text-lg font-semibold">Welcome, {session.user.name || session.user.email}!</div>
+          <div className="text-sm text-gray-600 dark:text-gray-300">Email: {session.user.email}</div>
+        </div>
+      ) : status === "loading" ? (
+        <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-900/30 rounded-lg">Loading user info...</div>
+      ) : (
+        <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/30 rounded-lg">Not logged in</div>
+      )}
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 rounded-2xl p-6 md:p-8 text-white">
         <div className="flex items-center justify-between">
@@ -176,7 +189,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {userStats.testsCompleted}
+            {/* {userStats.testsCompleted} */}
+            {/* Mock data removed */}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             Tests Completed
@@ -190,7 +204,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {userStats.averageScore}%
+            {/* {userStats.averageScore}% */}
+            {/* Mock data removed */}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             Average Score
@@ -204,7 +219,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {userStats.studyStreak}
+            {/* {userStats.studyStreak} */}
+            {/* Mock data removed */}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             Day Streak
@@ -218,7 +234,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-2xl font-bold text-gray-900 dark:text-white">
-            {userStats.totalStudyTime}h
+            {/* {userStats.totalStudyTime}h */}
+            {/* Mock data removed */}
           </div>
           <div className="text-sm text-gray-600 dark:text-gray-400">
             Study Time
